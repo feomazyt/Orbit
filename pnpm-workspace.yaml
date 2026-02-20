@@ -1,2 +1,5 @@
 packages:
-  - "packages/*"
+  - packages/*
+
+patchedDependencies:
+  '@mikro-orm/core@6.6.7': patches/@mikro-orm__core@6.6.7.patch

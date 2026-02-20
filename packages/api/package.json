@@ -6,19 +6,29 @@
   "scripts": {
     "dev": "tsx watch src/index.ts",
     "start": "tsx src/index.ts",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "migration:create": "mikro-orm migration:create",
+    "migration:up": "mikro-orm migration:up",
+    "migration:down": "mikro-orm migration:down",
+    "migration:list": "mikro-orm migration:list"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "packageManager": "pnpm@10.26.2",
   "dependencies": {
+    "dotenv": "^16.4.5",
+    "@mikro-orm/core": "^6.6.7",
+    "@mikro-orm/migrations": "^6.6.7",
+    "@mikro-orm/postgresql": "^6.6.7",
     "@types/express": "^5.0.6",
     "express": "^5.2.1",
     "tsx": "^4.21.0",
     "typescript": "^5.9.3"
   },
   "devDependencies": {
-    "@types/node": "^25.3.0"
+    "@mikro-orm/cli": "^6.6.7",
+    "@types/node": "^25.3.0",
+    "ts-node": "^10.9.2"
   }
 }
