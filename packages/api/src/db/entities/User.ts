@@ -5,19 +5,19 @@ export class User {
   @PrimaryKey({ type: 'uuid', defaultRaw: 'gen_random_uuid()' })
   id!: string;
 
-  @Property()
+  @Property({ type: 'string' })
   @Unique()
   email!: string;
 
-  @Property({ columnType: 'text' })
+  @Property({ type: 'string', columnType: 'text' })
   passwordHash!: string;
 
-  @Property({ nullable: true })
+  @Property({ type: 'string', nullable: true })
   name?: string;
 
-  @Property()
+  @Property({ type: 'Date' })
   createdAt = new Date();
 
-  @Property({ onUpdate: () => new Date() })
+  @Property({ type: 'Date', onUpdate: () => new Date() })
   updatedAt = new Date();
 }

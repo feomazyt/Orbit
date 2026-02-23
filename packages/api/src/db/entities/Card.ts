@@ -16,21 +16,21 @@ export class Card {
   @ManyToOne(() => List, { deleteRule: 'cascade' })
   list!: List;
 
-  @Property()
+  @Property({ type: 'string' })
   title!: string;
 
-  @Property({ columnType: 'text', nullable: true })
+  @Property({ type: 'string', columnType: 'text', nullable: true })
   description?: string;
 
   @Property({ type: 'decimal', precision: 10, scale: 2 })
   position!: number;
 
-  @Property({ nullable: true })
+  @Property({ type: 'Date', nullable: true })
   dueDate?: Date;
 
-  @Property()
+  @Property({ type: 'Date' })
   createdAt = new Date();
 
-  @Property({ onUpdate: () => new Date() })
+  @Property({ type: 'Date', onUpdate: () => new Date() })
   updatedAt = new Date();
 }

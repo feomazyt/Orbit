@@ -8,15 +8,21 @@ export {
 export {
   CreateBoardBodySchema,
   UpdateBoardBodySchema,
+  ListBoardsQuerySchema,
   type CreateBoardBody,
   type UpdateBoardBody,
+  type ListBoardsQuery,
 } from './board.schemas.js';
 
 export {
   CreateListBodySchema,
+  CreateListOnBoardBodySchema,
   UpdateListBodySchema,
+  ReorderListsBodySchema,
   type CreateListBody,
+  type CreateListOnBoardBody,
   type UpdateListBody,
+  type ReorderListsBody,
 } from './list.schemas.js';
 
 export {
@@ -31,6 +37,8 @@ export {
 export {
   CreateCommentBodySchema,
   UpdateCommentBodySchema,
+  ListCommentsQuerySchema,
   type CreateCommentBody,
   type UpdateCommentBody,
+  type ListCommentsQuery,
 } from './comment.schemas.js';

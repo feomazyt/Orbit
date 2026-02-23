@@ -14,5 +14,20 @@ export const UpdateListBodySchema = z.object({
   position: z.number().int().nonnegative().optional(),
 });
 
+/** For POST /boards/:boardId/lists — boardId comes from URL */
+export const CreateListOnBoardBodySchema = z.object({
+  title: titleSchema,
+  position: z.number().int().nonnegative().optional(),
+});
+
+export const ReorderListsBodySchema = z.array(
+  z.object({
+    id: uuidSchema,
+    position: z.number().int().nonnegative(),
+  })
+);
+
 export type CreateListBody = z.infer<typeof CreateListBodySchema>;
 export type UpdateListBody = z.infer<typeof UpdateListBodySchema>;
+export type CreateListOnBoardBody = z.infer<typeof CreateListOnBoardBodySchema>;
+export type ReorderListsBody = z.infer<typeof ReorderListsBodySchema>;

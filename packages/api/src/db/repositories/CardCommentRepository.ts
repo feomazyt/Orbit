@@ -10,8 +10,16 @@ export class CardCommentRepository {
     return this.em.findOne(CardComment, { id }, { populate: ['card', 'card.list', 'card.list.board', 'user'] });
   }
 
-  findByCardId(cardId: string): Promise<CardComment[]> {
-    return this.em.find(CardComment, { card: cardId }, { orderBy: { createdAt: 'ASC' } });
+  findByCardId(
+    cardId: string,
+    options?: { limit?: number; offset?: number }
+  ): Promise<CardComment[]> {
+    return this.em.find(CardComment, { card: cardId }, {
+      orderBy: { createdAt: 'ASC' },
+      populate: ['user'],
+      limit: options?.limit,
+      offset: options?.offset,
+    });
   }
 
   async create(data: { cardId: string; userId: string; content: string }): Promise<CardComment> {

@@ -16,15 +16,15 @@ export class Board {
   @ManyToOne(() => User, { deleteRule: 'cascade' })
   owner!: User;
 
-  @Property()
+  @Property({ type: 'string' })
   title!: string;
 
-  @Property({ nullable: true })
+  @Property({ type: 'string', nullable: true })
   description?: string;
 
-  @Property()
+  @Property({ type: 'Date' })
   createdAt = new Date();
 
-  @Property({ onUpdate: () => new Date() })
+  @Property({ type: 'Date', onUpdate: () => new Date() })
   updatedAt = new Date();
 }

@@ -13,6 +13,7 @@ export const CreateCardBodySchema = z.object({
 export const UpdateCardBodySchema = z.object({
   title: titleSchema.optional(),
   description: z.string().max(5000).optional(),
+  dueDate: z.coerce.date().nullable().optional(),
   position: z.number().int().nonnegative().optional(),
 });
 

@@ -31,8 +31,8 @@ function getDatabaseConfig() {
   return defineConfig({
     ...base,
     dbName: process.env.POSTGRES_DB ?? 'orbit',
-    host: process.env.DB_HOST ?? 'localhost',
-    port: process.env.DB_PORT ? Number(process.env.DB_PORT) : 5432,
+    host: process.env.POSTGRES_HOST ?? 'localhost',
+    port: process.env.POSTGRES_PORT ? Number(process.env.POSTGRES_PORT) : 5432,
     user: process.env.POSTGRES_USER ?? 'postgres',
     password: process.env.POSTGRES_PASSWORD ?? 'postgres',
   });
@@ -42,7 +42,7 @@ let orm: Awaited<ReturnType<typeof MikroORM.init>> | null = null;
 
 /**
  * Initialize database connection. Call once at app startup.
- * Reads DATABASE_URL from env, or falls back to DB_HOST, DB_PORT, POSTGRES_*.
+ * Reads DATABASE_URL from env, or falls back to POSTGRES_HOST, POSTGRES_PORT, POSTGRES_*.
  */
 export async function initDatabase() {
   if (orm) return orm;
@@ -54,7 +54,8 @@ export async function initDatabase() {
  * Get the ORM instance. Throws if initDatabase() has not been called yet.
  */
 export function getOrm() {
-  if (!orm) throw new Error('Database not initialized. Call initDatabase() first.');
+  if (!orm)
+    throw new Error('Database not initialized. Call initDatabase() first.');
   return orm;
 }
 
@@ -77,7 +78,9 @@ export function getEntityManager() {
  *   await repos.listRepository.create({ boardId: board.id, title: 'Backlog' });
  * });
  */
-export async function withTransaction<T>(fn: (em: EntityManager) => Promise<T>): Promise<T> {
+export async function withTransaction<T>(
+  fn: (em: EntityManager) => Promise<T>,
+): Promise<T> {
   return getOrm().em.transactional(fn);
 }
 

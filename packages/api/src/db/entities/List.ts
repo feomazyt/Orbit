@@ -16,15 +16,15 @@ export class List {
   @ManyToOne(() => Board, { deleteRule: 'cascade' })
   board!: Board;
 
-  @Property()
+  @Property({ type: 'string' })
   title!: string;
 
   @Property({ type: 'decimal', precision: 10, scale: 2 }) // lub type: 'integer'
   position!: number;
 
-  @Property()
+  @Property({ type: 'Date' })
   createdAt = new Date();
 
-  @Property({ onUpdate: () => new Date() })
+  @Property({ type: 'Date', onUpdate: () => new Date() })
   updatedAt = new Date();
 }

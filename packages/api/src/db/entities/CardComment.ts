@@ -21,12 +21,12 @@ export class CardComment {
   @ManyToOne(() => User, { deleteRule: 'cascade' })
   user!: User;
 
-  @Property({ columnType: 'text' })
+  @Property({ type: 'string', columnType: 'text' })
   content!: string;
 
-  @Property()
+  @Property({ type: 'Date' })
   createdAt = new Date();
 
-  @Property({ onUpdate: () => new Date() })
+  @Property({ type: 'Date', onUpdate: () => new Date() })
   updatedAt = new Date();
 }

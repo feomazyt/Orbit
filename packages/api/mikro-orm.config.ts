@@ -14,8 +14,8 @@ config({ path: localEnv, override: false });
 export default defineConfig({
   extensions: [Migrator],
   dbName: process.env.POSTGRES_DB ?? 'orbit',
-  host: process.env.DB_HOST ?? 'localhost',
-  port: process.env.DB_PORT ? Number(process.env.DB_PORT) : 5432,
+  host: process.env.POSTGRES_HOST ?? 'localhost',
+  port: process.env.POSTGRES_PORT ? Number(process.env.POSTGRES_PORT) : 5432,
   user: process.env.POSTGRES_USER ?? 'postgres',
   password: process.env.POSTGRES_PASSWORD ?? 'postgres',
   entities: ['dist/db/entities/**/*.js'], // produkcja

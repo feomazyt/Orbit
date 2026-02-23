@@ -5,8 +5,19 @@ import { User } from '../entities/User';
 export class BoardRepository {
   constructor(private readonly em: EntityManager) {}
 
-  findByOwnerId(ownerId: string): Promise<Board[]> {
-    return this.em.find(Board, { owner: ownerId }, { orderBy: { createdAt: 'DESC' } });
+  findByOwnerId(
+    ownerId: string,
+    options?: { limit?: number; offset?: number; title?: string }
+  ): Promise<Board[]> {
+    const where: Record<string, unknown> = { owner: ownerId };
+    if (options?.title?.trim()) {
+      where.title = { $like: `%${options.title.trim()}%` };
+    }
+    return this.em.find(Board, where, {
+      orderBy: { createdAt: 'DESC' },
+      limit: options?.limit,
+      offset: options?.offset,
+    });
   }
 
   findById(id: string): Promise<Board | null> {

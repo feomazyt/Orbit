@@ -17,8 +17,10 @@ export interface JwtPayload {
   email: string;
 }
 
+const ACCESS_TOKEN_EXPIRES_IN: string = process.env.JWT_ACCESS_EXPIRES_IN ?? '1h';
+
 export function signToken(payload: JwtPayload): string {
-  return jwt.sign(payload, JWT_SECRET, { expiresIn: '7d' });
+  return jwt.sign(payload, JWT_SECRET, { expiresIn: ACCESS_TOKEN_EXPIRES_IN as jwt.SignOptions['expiresIn'] });
 }
 
 export function verifyToken(token: string): JwtPayload {
