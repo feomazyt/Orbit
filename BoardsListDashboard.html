@@ -1,0 +1,426 @@
+<!doctype html>
+
+<html lang="pl">
+  <head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Orbit - Dashboard</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+      rel="stylesheet"
+    />
+    <script id="tailwind-config">
+      tailwind.config = {
+        darkMode: 'class',
+        theme: {
+          extend: {
+            colors: {
+              primary: '#2463eb',
+              'background-light': '#f6f6f8',
+              'background-dark': '#111621',
+            },
+            fontFamily: {
+              display: ['Inter', 'sans-serif'],
+            },
+            borderRadius: {
+              DEFAULT: '0.25rem',
+              lg: '0.5rem',
+              xl: '0.75rem',
+              full: '9999px',
+            },
+          },
+        },
+      };
+    </script>
+    <style>
+      body {
+        font-family: 'Inter', sans-serif;
+      }
+      .material-symbols-outlined {
+        font-variation-settings:
+          'FILL' 0,
+          'wght' 400,
+          'GRAD' 0,
+          'opsz' 24;
+      }
+    </style>
+  </head>
+  <body
+    class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 min-h-screen font-display"
+  >
+    <!-- Top Navigation Bar -->
+    <header
+      class="sticky top-0 z-50 w-full bg-white dark:bg-background-dark border-b border-slate-200 dark:border-slate-800"
+    >
+      <div
+        class="max-w-[1440px] mx-auto px-6 h-16 flex items-center justify-between"
+      >
+        <div class="flex items-center gap-3">
+          <div
+            class="bg-primary text-white p-1.5 rounded-lg flex items-center justify-center"
+          >
+            <span class="material-symbols-outlined text-2xl"
+              >rocket_launch</span
+            >
+          </div>
+          <h1
+            class="text-xl font-bold tracking-tight text-slate-900 dark:text-white"
+          >
+            Orbit
+          </h1>
+        </div>
+        <div class="flex items-center gap-4">
+          <div
+            class="hidden md:flex items-center bg-slate-100 dark:bg-slate-800 rounded-full px-3 py-1.5 border border-slate-200 dark:border-slate-700"
+          >
+            <span class="material-symbols-outlined text-slate-500 text-sm"
+              >search</span
+            >
+            <input
+              class="bg-transparent border-none focus:ring-0 text-sm w-48 placeholder-slate-500"
+              placeholder="Szukaj..."
+              type="text"
+            />
+          </div>
+          <button
+            class="p-2 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-full transition-colors relative"
+          >
+            <span class="material-symbols-outlined">notifications</span>
+            <span
+              class="absolute top-2 right-2.5 w-2 h-2 bg-red-500 rounded-full border-2 border-white dark:border-background-dark"
+            ></span>
+          </button>
+          <button
+            class="p-2 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-full transition-colors"
+          >
+            <span class="material-symbols-outlined">settings</span>
+          </button>
+          <div class="h-8 w-px bg-slate-200 dark:bg-slate-700 mx-1"></div>
+          <div class="flex items-center gap-3 pl-1">
+            <div class="text-right hidden sm:block">
+              <p class="text-sm font-semibold leading-none">Adam Kowalski</p>
+              <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">
+                Admin
+              </p>
+            </div>
+            <div
+              class="size-10 rounded-full bg-primary/10 border-2 border-primary/20 flex items-center justify-center text-primary font-bold overflow-hidden"
+              data-alt="User profile avatar showing initials AK"
+            >
+              AK
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+    <!-- Main Content Area -->
+    <main class="max-w-[1440px] mx-auto px-6 py-10">
+      <!-- Action Header -->
+      <div
+        class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-10"
+      >
+        <div>
+          <h2
+            class="text-3xl font-black text-slate-900 dark:text-white tracking-tight"
+          >
+            Moje tablice
+          </h2>
+          <p class="text-slate-500 dark:text-slate-400 mt-1">
+            Zarządzaj swoimi projektami i zadaniami zespołu.
+          </p>
+        </div>
+        <button
+          class="inline-flex items-center justify-center gap-2 bg-primary hover:bg-primary/90 text-white px-5 py-2.5 rounded-lg font-bold transition-all shadow-sm active:scale-95"
+        >
+          <span class="material-symbols-outlined text-lg">add</span>
+          Nowa tablica
+        </button>
+      </div>
+      <!-- Boards Grid -->
+      <div
+        class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
+      >
+        <!-- Marketing Card -->
+        <div
+          class="group relative bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 overflow-hidden hover:border-primary/50 transition-all hover:shadow-lg cursor-pointer aspect-[16/10] flex flex-col"
+        >
+          <div class="h-2 w-full bg-blue-500"></div>
+          <div class="p-5 flex-1 flex flex-col justify-between">
+            <div>
+              <div class="flex justify-between items-start mb-2">
+                <span class="material-symbols-outlined text-blue-500"
+                  >campaign</span
+                >
+                <span
+                  class="material-symbols-outlined text-slate-400 opacity-0 group-hover:opacity-100 transition-opacity"
+                  >more_horiz</span
+                >
+              </div>
+              <h3
+                class="text-lg font-bold text-slate-900 dark:text-white group-hover:text-primary transition-colors"
+              >
+                Marketing Q4
+              </h3>
+              <p class="text-xs text-slate-500 mt-1">
+                Ostatnia zmiana: 2 godziny temu
+              </p>
+            </div>
+            <div class="flex -space-x-2">
+              <div
+                class="size-7 rounded-full border-2 border-white dark:border-slate-900 bg-slate-200 dark:bg-slate-700 flex items-center justify-center text-[10px] font-bold"
+                data-alt="Team member avatar placeholder"
+              >
+                JD
+              </div>
+              <div
+                class="size-7 rounded-full border-2 border-white dark:border-slate-900 bg-primary/20 flex items-center justify-center text-[10px] font-bold text-primary"
+                data-alt="Team member avatar placeholder"
+              >
+                MK
+              </div>
+              <div
+                class="size-7 rounded-full border-2 border-white dark:border-slate-900 bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-[10px] font-bold text-slate-500"
+              >
+                +3
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Product Roadmap Card -->
+        <div
+          class="group relative bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 overflow-hidden hover:border-primary/50 transition-all hover:shadow-lg cursor-pointer aspect-[16/10] flex flex-col"
+        >
+          <div class="h-2 w-full bg-purple-500"></div>
+          <div class="p-5 flex-1 flex flex-col justify-between">
+            <div>
+              <div class="flex justify-between items-start mb-2">
+                <span class="material-symbols-outlined text-purple-500"
+                  >map</span
+                >
+                <span
+                  class="material-symbols-outlined text-slate-400 opacity-0 group-hover:opacity-100 transition-opacity"
+                  >more_horiz</span
+                >
+              </div>
+              <h3
+                class="text-lg font-bold text-slate-900 dark:text-white group-hover:text-primary transition-colors"
+              >
+                Product Roadmap
+              </h3>
+              <p class="text-xs text-slate-500 mt-1">
+                Ostatnia zmiana: Wczoraj
+              </p>
+            </div>
+            <div class="flex -space-x-2">
+              <div
+                class="size-7 rounded-full border-2 border-white dark:border-slate-900 bg-slate-200 dark:bg-slate-700 flex items-center justify-center text-[10px] font-bold"
+                data-alt="Team member avatar placeholder"
+              >
+                AL
+              </div>
+              <div
+                class="size-7 rounded-full border-2 border-white dark:border-slate-900 bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-[10px] font-bold text-slate-500"
+              >
+                +12
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Bug Tracking Card -->
+        <div
+          class="group relative bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 overflow-hidden hover:border-primary/50 transition-all hover:shadow-lg cursor-pointer aspect-[16/10] flex flex-col"
+        >
+          <div class="h-2 w-full bg-rose-500"></div>
+          <div class="p-5 flex-1 flex flex-col justify-between">
+            <div>
+              <div class="flex justify-between items-start mb-2">
+                <span class="material-symbols-outlined text-rose-500"
+                  >bug_report</span
+                >
+                <span
+                  class="material-symbols-outlined text-slate-400 opacity-0 group-hover:opacity-100 transition-opacity"
+                  >more_horiz</span
+                >
+              </div>
+              <h3
+                class="text-lg font-bold text-slate-900 dark:text-white group-hover:text-primary transition-colors"
+              >
+                Bug Tracking
+              </h3>
+              <p class="text-xs text-slate-500 mt-1">
+                Ostatnia zmiana: 5 minut temu
+              </p>
+            </div>
+            <div class="flex items-center gap-2">
+              <span
+                class="px-2 py-0.5 rounded bg-rose-100 dark:bg-rose-900/30 text-rose-600 dark:text-rose-400 text-[10px] font-bold uppercase tracking-wider"
+                >High Priority</span
+              >
+            </div>
+          </div>
+        </div>
+        <!-- Website Redesign Card -->
+        <div
+          class="group relative bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 overflow-hidden hover:border-primary/50 transition-all hover:shadow-lg cursor-pointer aspect-[16/10] flex flex-col"
+        >
+          <div class="h-2 w-full bg-emerald-500"></div>
+          <div class="p-5 flex-1 flex flex-col justify-between">
+            <div>
+              <div class="flex justify-between items-start mb-2">
+                <span class="material-symbols-outlined text-emerald-500"
+                  >palette</span
+                >
+                <span
+                  class="material-symbols-outlined text-slate-400 opacity-0 group-hover:opacity-100 transition-opacity"
+                  >more_horiz</span
+                >
+              </div>
+              <h3
+                class="text-lg font-bold text-slate-900 dark:text-white group-hover:text-primary transition-colors"
+              >
+                Website Redesign
+              </h3>
+              <p class="text-xs text-slate-500 mt-1">
+                Ostatnia zmiana: 3 dni temu
+              </p>
+            </div>
+            <div
+              class="w-full bg-slate-100 dark:bg-slate-800 h-1.5 rounded-full overflow-hidden"
+            >
+              <div
+                class="bg-emerald-500 h-full w-[65%]"
+                data-alt="Progress bar at sixty five percent"
+              ></div>
+            </div>
+          </div>
+        </div>
+        <!-- Dashboard Analytics Card -->
+        <div
+          class="group relative bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 overflow-hidden hover:border-primary/50 transition-all hover:shadow-lg cursor-pointer aspect-[16/10] flex flex-col"
+        >
+          <div class="h-2 w-full bg-amber-500"></div>
+          <div class="p-5 flex-1 flex flex-col justify-between">
+            <div>
+              <div class="flex justify-between items-start mb-2">
+                <span class="material-symbols-outlined text-amber-500"
+                  >analytics</span
+                >
+                <span
+                  class="material-symbols-outlined text-slate-400 opacity-0 group-hover:opacity-100 transition-opacity"
+                  >more_horiz</span
+                >
+              </div>
+              <h3
+                class="text-lg font-bold text-slate-900 dark:text-white group-hover:text-primary transition-colors"
+              >
+                Analytics Dashboard
+              </h3>
+              <p class="text-xs text-slate-500 mt-1">
+                Ostatnia zmiana: 1 tydzień temu
+              </p>
+            </div>
+            <div class="flex -space-x-2">
+              <div
+                class="size-7 rounded-full border-2 border-white dark:border-slate-900 bg-primary/20 flex items-center justify-center text-[10px] font-bold text-primary"
+                data-alt="Team member avatar placeholder"
+              >
+                AK
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Create New Board Placeholder -->
+        <div
+          class="group relative bg-slate-50 dark:bg-slate-900/50 rounded-xl border-2 border-dashed border-slate-300 dark:border-slate-700 hover:border-primary hover:bg-primary/5 transition-all cursor-pointer aspect-[16/10] flex flex-col items-center justify-center text-center p-6"
+        >
+          <div
+            class="size-12 rounded-full bg-slate-200 dark:bg-slate-800 group-hover:bg-primary group-hover:text-white transition-colors flex items-center justify-center mb-3"
+          >
+            <span class="material-symbols-outlined text-2xl">add</span>
+          </div>
+          <p
+            class="font-bold text-slate-900 dark:text-white group-hover:text-primary transition-colors"
+          >
+            Utwórz nową tablicę
+          </p>
+          <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">
+            Zacznij zarządzać nowym projektem
+          </p>
+        </div>
+      </div>
+      <!-- Secondary Section -->
+      <section class="mt-16">
+        <div class="flex items-center gap-2 mb-6">
+          <span class="material-symbols-outlined text-slate-400">star</span>
+          <h3 class="text-lg font-bold text-slate-900 dark:text-white">
+            Ulubione
+          </h3>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <!-- Favorite Card 1 -->
+          <div
+            class="flex items-center p-4 bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 hover:shadow-md transition-shadow cursor-pointer"
+          >
+            <div
+              class="size-10 rounded bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 flex items-center justify-center mr-4"
+            >
+              <span class="material-symbols-outlined">campaign</span>
+            </div>
+            <div class="flex-1">
+              <h4 class="font-bold text-slate-900 dark:text-white">
+                Marketing Q4
+              </h4>
+              <p class="text-xs text-slate-500">Współdzielone z 5 osobami</p>
+            </div>
+            <span class="material-symbols-outlined text-amber-400">star</span>
+          </div>
+          <!-- Favorite Card 2 -->
+          <div
+            class="flex items-center p-4 bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 hover:shadow-md transition-shadow cursor-pointer"
+          >
+            <div
+              class="size-10 rounded bg-rose-100 dark:bg-rose-900/30 text-rose-600 dark:text-rose-400 flex items-center justify-center mr-4"
+            >
+              <span class="material-symbols-outlined">bug_report</span>
+            </div>
+            <div class="flex-1">
+              <h4 class="font-bold text-slate-900 dark:text-white">
+                Bug Tracking
+              </h4>
+              <p class="text-xs text-slate-500">Prywatna tablica</p>
+            </div>
+            <span class="material-symbols-outlined text-amber-400">star</span>
+          </div>
+        </div>
+      </section>
+    </main>
+    <!-- Simple Footer Information -->
+    <footer
+      class="max-w-[1440px] mx-auto px-6 py-8 mt-12 border-t border-slate-200 dark:border-slate-800"
+    >
+      <div
+        class="flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-slate-500 dark:text-slate-400"
+      >
+        <p>© 2023 Orbit Project Management. Wszystkie prawa zastrzeżone.</p>
+        <div class="flex gap-6">
+          <a class="hover:text-primary transition-colors" href="#"
+            >Dokumentacja</a
+          >
+          <a class="hover:text-primary transition-colors" href="#">Pomoc</a>
+          <a class="hover:text-primary transition-colors" href="#"
+            >Polityka prywatności</a
+          >
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

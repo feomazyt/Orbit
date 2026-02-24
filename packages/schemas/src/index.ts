@@ -42,3 +42,16 @@ export {
   type UpdateCommentBody,
   type ListCommentsQuery,
 } from './comment.schemas.js';
+
+export {
+  BoardEntitySchema,
+  ListEntitySchema,
+  CardEntitySchema,
+  CommentEntitySchema,
+  UserEntitySchema,
+  type BoardEntity,
+  type ListEntity,
+  type CardEntity,
+  type CommentEntity,
+  type UserEntity,
+} from './entities.js';

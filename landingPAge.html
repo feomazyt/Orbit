@@ -1,0 +1,423 @@
+<!doctype html>
+
+<html lang="pl">
+  <head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Orbit - Zarządzaj zadaniami w jednym miejscu</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700,0..1&amp;display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+      rel="stylesheet"
+    />
+    <script id="tailwind-config">
+      tailwind.config = {
+        darkMode: 'class',
+        theme: {
+          extend: {
+            colors: {
+              primary: '#2463eb',
+              'background-light': '#f8fafc',
+              'background-dark': '#111621',
+            },
+            fontFamily: {
+              display: ['Inter', 'sans-serif'],
+            },
+            borderRadius: {
+              DEFAULT: '0.25rem',
+              lg: '0.5rem',
+              xl: '0.75rem',
+              full: '9999px',
+            },
+          },
+        },
+      };
+    </script>
+    <style>
+      body {
+        font-family: 'Inter', sans-serif;
+      }
+      .material-symbols-outlined {
+        font-variation-settings:
+          'FILL' 0,
+          'wght' 400,
+          'GRAD' 0,
+          'opsz' 24;
+      }
+    </style>
+  </head>
+  <body
+    class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 antialiased"
+  >
+    <!-- Top Navigation Bar -->
+    <header
+      class="sticky top-0 z-50 w-full bg-white/80 dark:bg-background-dark/80 backdrop-blur-md border-b border-slate-200 dark:border-slate-800"
+    >
+      <div
+        class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between"
+      >
+        <!-- Logo -->
+        <div class="flex items-center gap-2">
+          <div
+            class="bg-primary text-white p-1.5 rounded-lg flex items-center justify-center shadow-lg shadow-primary/20"
+          >
+            <span class="material-symbols-outlined text-2xl">orbit</span>
+          </div>
+          <span
+            class="text-xl font-extrabold tracking-tight text-slate-900 dark:text-white"
+            >Orbit</span
+          >
+        </div>
+        <!-- Nav Links -->
+        <nav class="hidden md:flex items-center gap-10">
+          <a
+            class="text-sm font-semibold text-slate-600 dark:text-slate-300 hover:text-primary transition-colors"
+            href="#"
+            >Produkt</a
+          >
+          <a
+            class="text-sm font-semibold text-slate-600 dark:text-slate-300 hover:text-primary transition-colors"
+            href="#"
+            >Cennik</a
+          >
+          <a
+            class="text-sm font-semibold text-slate-600 dark:text-slate-300 hover:text-primary transition-colors"
+            href="#"
+            >O nas</a
+          >
+        </nav>
+        <!-- Auth Actions -->
+        <div class="flex items-center gap-4">
+          <button
+            class="px-4 py-2 text-sm font-bold text-slate-700 dark:text-slate-200 hover:text-primary transition-colors"
+          >
+            Zaloguj się
+          </button>
+          <button
+            class="bg-primary hover:bg-primary/90 text-white px-6 py-2.5 rounded-lg text-sm font-bold shadow-md shadow-primary/20 transition-all active:scale-95"
+          >
+            Załóż konto
+          </button>
+        </div>
+      </div>
+    </header>
+    <main>
+      <!-- Hero Section -->
+      <section class="relative pt-16 pb-24 overflow-hidden">
+        <div class="max-w-7xl mx-auto px-6 text-center">
+          <!-- Hero Content -->
+          <div class="max-w-3xl mx-auto mb-16">
+            <h1
+              class="text-5xl md:text-7xl font-black text-slate-900 dark:text-white leading-[1.1] tracking-tight mb-6"
+            >
+              Zarządzaj zadaniami w
+              <span class="text-primary">jednym miejscu</span>
+            </h1>
+            <p
+              class="text-lg md:text-xl text-slate-600 dark:text-slate-400 font-medium leading-relaxed mb-10"
+            >
+              Intuicyjna tablica Kanban dla zespołów, które cenią czas i
+              efektywność. Zapomnij o chaosie i skup się na tym, co naprawdę
+              ważne.
+            </p>
+            <div
+              class="flex flex-col sm:flex-row items-center justify-center gap-4"
+            >
+              <button
+                class="w-full sm:w-auto px-10 py-4 bg-primary text-white rounded-xl text-lg font-bold shadow-xl shadow-primary/30 hover:shadow-primary/40 transition-all hover:-translate-y-0.5 active:translate-y-0"
+              >
+                Zacznij za darmo
+              </button>
+              <button
+                class="w-full sm:w-auto px-10 py-4 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white rounded-xl text-lg font-bold hover:bg-slate-50 dark:hover:bg-slate-700 transition-all"
+              >
+                Zobacz demo
+              </button>
+            </div>
+          </div>
+          <!-- Product Mockup Container -->
+          <div class="relative max-w-5xl mx-auto">
+            <!-- Decorative Background Gradients -->
+            <div
+              class="absolute -top-20 -left-20 w-72 h-72 bg-primary/10 rounded-full blur-[100px] pointer-events-none"
+            ></div>
+            <div
+              class="absolute -bottom-20 -right-20 w-72 h-72 bg-blue-400/10 rounded-full blur-[100px] pointer-events-none"
+            ></div>
+            <div
+              class="relative bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-700 shadow-2xl overflow-hidden"
+            >
+              <!-- Browser Window Header -->
+              <div
+                class="h-10 border-b border-slate-200 dark:border-slate-700 flex items-center px-4 gap-1.5 bg-slate-50/50 dark:bg-slate-800/50"
+              >
+                <div class="w-3 h-3 rounded-full bg-red-400"></div>
+                <div class="w-3 h-3 rounded-full bg-yellow-400"></div>
+                <div class="w-3 h-3 rounded-full bg-green-400"></div>
+              </div>
+              <!-- App UI Mockup -->
+              <div class="p-6 bg-slate-50 dark:bg-slate-950">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  <!-- Column 1: To Do -->
+                  <div class="flex flex-col gap-4">
+                    <div class="flex items-center justify-between px-2">
+                      <h3
+                        class="font-bold text-slate-900 dark:text-slate-100 flex items-center gap-2"
+                      >
+                        Do zrobienia
+                        <span
+                          class="text-xs bg-slate-200 dark:bg-slate-800 px-2 py-0.5 rounded-full"
+                          >3</span
+                        >
+                      </h3>
+                      <span class="material-symbols-outlined text-slate-400"
+                        >more_horiz</span
+                      >
+                    </div>
+                    <div
+                      class="bg-white dark:bg-slate-900 p-4 rounded-lg shadow-sm border border-slate-200 dark:border-slate-800 flex flex-col gap-3"
+                    >
+                      <div class="flex gap-2">
+                        <span
+                          class="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 bg-primary/10 text-primary rounded"
+                          >Design</span
+                        >
+                      </div>
+                      <p
+                        class="text-sm font-semibold text-slate-800 dark:text-slate-200"
+                      >
+                        Odświeżenie logo Orbit
+                      </p>
+                      <div
+                        class="flex items-center justify-between pt-2 border-t border-slate-50 dark:border-slate-800"
+                      >
+                        <div class="flex -space-x-2">
+                          <div
+                            class="w-6 h-6 rounded-full bg-slate-300 border-2 border-white dark:border-slate-900"
+                          ></div>
+                          <div
+                            class="w-6 h-6 rounded-full bg-slate-400 border-2 border-white dark:border-slate-900"
+                          ></div>
+                        </div>
+                        <span
+                          class="material-symbols-outlined text-sm text-slate-400"
+                          >chat_bubble</span
+                        >
+                      </div>
+                    </div>
+                    <div
+                      class="bg-white dark:bg-slate-900 p-4 rounded-lg shadow-sm border border-slate-200 dark:border-slate-800"
+                    >
+                      <p
+                        class="text-sm font-semibold text-slate-800 dark:text-slate-200"
+                      >
+                        Przygotowanie kampanii Social Media
+                      </p>
+                    </div>
+                  </div>
+                  <!-- Column 2: In Progress -->
+                  <div class="flex flex-col gap-4">
+                    <div class="flex items-center justify-between px-2">
+                      <h3
+                        class="font-bold text-slate-900 dark:text-slate-100 flex items-center gap-2"
+                      >
+                        W trakcie
+                        <span
+                          class="text-xs bg-slate-200 dark:bg-slate-800 px-2 py-0.5 rounded-full"
+                          >2</span
+                        >
+                      </h3>
+                      <span class="material-symbols-outlined text-slate-400"
+                        >more_horiz</span
+                      >
+                    </div>
+                    <div
+                      class="bg-white dark:bg-slate-900 p-4 rounded-lg shadow-sm border-l-4 border-l-primary border-slate-200 dark:border-slate-800 flex flex-col gap-3"
+                    >
+                      <div class="flex gap-2">
+                        <span
+                          class="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 bg-emerald-100 text-emerald-600 rounded"
+                          >Dev</span
+                        >
+                      </div>
+                      <p
+                        class="text-sm font-semibold text-slate-800 dark:text-slate-200"
+                      >
+                        Integracja z API Slack
+                      </p>
+                      <div
+                        class="w-full bg-slate-100 dark:bg-slate-800 h-1.5 rounded-full overflow-hidden mt-2"
+                      >
+                        <div class="bg-primary h-full w-[65%]"></div>
+                      </div>
+                    </div>
+                  </div>
+                  <!-- Column 3: Done -->
+                  <div class="flex flex-col gap-4">
+                    <div class="flex items-center justify-between px-2">
+                      <h3
+                        class="font-bold text-slate-900 dark:text-slate-100 flex items-center gap-2"
+                      >
+                        Zakończone
+                        <span
+                          class="text-xs bg-slate-200 dark:bg-slate-800 px-2 py-0.5 rounded-full"
+                          >8</span
+                        >
+                      </h3>
+                      <span class="material-symbols-outlined text-slate-400"
+                        >more_horiz</span
+                      >
+                    </div>
+                    <div
+                      class="bg-white dark:bg-slate-900 p-4 rounded-lg shadow-sm border border-slate-200 dark:border-slate-800 opacity-60"
+                    >
+                      <p
+                        class="text-sm font-semibold text-slate-800 dark:text-slate-200 line-through"
+                      >
+                        Strona landing page - v1
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+      <!-- Features Section -->
+      <section class="py-24 bg-white dark:bg-slate-950/50">
+        <div class="max-w-7xl mx-auto px-6">
+          <div class="text-center mb-16">
+            <h2 class="text-3xl font-black text-slate-900 dark:text-white mb-4">
+              Wszystko, czego potrzebuje Twój zespół
+            </h2>
+            <p class="text-slate-600 dark:text-slate-400 max-w-2xl mx-auto">
+              Orbit to kompletne narzędzie do zarządzania projektami, które
+              pomaga zespołom pracować mądrzej, a nie ciężej.
+            </p>
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <!-- Feature 1 -->
+            <div
+              class="p-8 bg-background-light dark:bg-slate-900 rounded-2xl border border-slate-100 dark:border-slate-800 hover:border-primary/30 transition-all group"
+            >
+              <div
+                class="w-14 h-14 bg-primary/10 text-primary rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform"
+              >
+                <span class="material-symbols-outlined text-3xl"
+                  >view_kanban</span
+                >
+              </div>
+              <h3 class="text-xl font-bold text-slate-900 dark:text-white mb-3">
+                Tablice Kanban
+              </h3>
+              <p class="text-slate-600 dark:text-slate-400 leading-relaxed">
+                Wizualne śledzenie zadań i postępów projektu na czytelnych
+                tablicach, które możesz dowolnie konfigurować.
+              </p>
+            </div>
+            <!-- Feature 2 -->
+            <div
+              class="p-8 bg-background-light dark:bg-slate-900 rounded-2xl border border-slate-100 dark:border-slate-800 hover:border-primary/30 transition-all group"
+            >
+              <div
+                class="w-14 h-14 bg-primary/10 text-primary rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform"
+              >
+                <span class="material-symbols-outlined text-3xl"
+                  >chat_bubble</span
+                >
+              </div>
+              <h3 class="text-xl font-bold text-slate-900 dark:text-white mb-3">
+                Komentarze
+              </h3>
+              <p class="text-slate-600 dark:text-slate-400 leading-relaxed">
+                Komunikacja zespołowa bezpośrednio w kontekście konkretnych
+                zadań. Wszystkie ustalenia w jednym miejscu.
+              </p>
+            </div>
+            <!-- Feature 3 -->
+            <div
+              class="p-8 bg-background-light dark:bg-slate-900 rounded-2xl border border-slate-100 dark:border-slate-800 hover:border-primary/30 transition-all group"
+            >
+              <div
+                class="w-14 h-14 bg-primary/10 text-primary rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform"
+              >
+                <span class="material-symbols-outlined text-3xl">sync_alt</span>
+              </div>
+              <h3 class="text-xl font-bold text-slate-900 dark:text-white mb-3">
+                Współpraca w czasie rzeczywistym
+              </h3>
+              <p class="text-slate-600 dark:text-slate-400 leading-relaxed">
+                Błyskawiczna synchronizacja zmian u wszystkich członków zespołu
+                jednocześnie. Bez przeładowywania strony.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+    <!-- Footer -->
+    <footer class="py-12 border-t border-slate-200 dark:border-slate-800">
+      <div class="max-w-7xl mx-auto px-6">
+        <div
+          class="flex flex-col md:flex-row items-center justify-between gap-8"
+        >
+          <div class="flex items-center gap-2">
+            <div
+              class="bg-primary text-white p-1 rounded flex items-center justify-center"
+            >
+              <span class="material-symbols-outlined text-sm">orbit</span>
+            </div>
+            <span
+              class="text-sm font-bold tracking-tight text-slate-900 dark:text-white"
+              >Orbit Project Management</span
+            >
+          </div>
+          <div class="flex gap-8">
+            <a
+              class="text-sm text-slate-500 hover:text-primary transition-colors"
+              href="#"
+              >Polityka prywatności</a
+            >
+            <a
+              class="text-sm text-slate-500 hover:text-primary transition-colors"
+              href="#"
+              >Regulamin</a
+            >
+            <a
+              class="text-sm text-slate-500 hover:text-primary transition-colors"
+              href="#"
+              >Kontakt</a
+            >
+          </div>
+          <div class="flex items-center gap-4">
+            <a class="text-slate-400 hover:text-primary" href="#"
+              ><span class="material-symbols-outlined">public</span></a
+            >
+            <a class="text-slate-400 hover:text-primary" href="#"
+              ><span class="material-symbols-outlined">alternate_email</span></a
+            >
+            <a class="text-slate-400 hover:text-primary" href="#"
+              ><span class="material-symbols-outlined">share</span></a
+            >
+          </div>
+        </div>
+        <div
+          class="text-center mt-8 pt-8 border-t border-slate-50 dark:border-slate-900"
+        >
+          <p class="text-sm text-slate-400">
+            © 2024 Orbit Project Management. Wszelkie prawa zastrzeżone.
+          </p>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

@@ -1,0 +1,574 @@
+<!doctype html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Kanban Board View - Orbit</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@300;400;500;600;700&amp;display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+      rel="stylesheet"
+    />
+    <script id="tailwind-config">
+      tailwind.config = {
+        darkMode: 'class',
+        theme: {
+          extend: {
+            colors: {
+              primary: '#2463eb',
+              'background-light': '#f6f6f8',
+              'background-dark': '#111621',
+            },
+            fontFamily: {
+              display: ['Inter', 'sans-serif'],
+            },
+            borderRadius: {
+              DEFAULT: '0.25rem',
+              lg: '0.5rem',
+              xl: '0.75rem',
+              full: '9999px',
+            },
+          },
+        },
+      };
+    </script>
+    <style>
+      body {
+        font-family: 'Inter', sans-serif;
+      }
+      .kanban-container {
+        height: calc(100vh - 180px);
+      }
+      .custom-scrollbar::-webkit-scrollbar {
+        height: 8px;
+        width: 8px;
+      }
+      .custom-scrollbar::-webkit-scrollbar-track {
+        background: rgba(0, 0, 0, 0.05);
+        border-radius: 10px;
+      }
+      .custom-scrollbar::-webkit-scrollbar-thumb {
+        background: rgba(0, 0, 0, 0.1);
+        border-radius: 10px;
+      }
+      .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+        background: rgba(0, 0, 0, 0.2);
+      }
+    </style>
+  </head>
+  <body
+    class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 font-display"
+  >
+    <div
+      class="relative flex min-h-screen w-full flex-col bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 dark:from-slate-900 dark:via-slate-900 dark:to-slate-800"
+    >
+      <!-- Header Section (Derived from TopNavBar) -->
+      <header
+        class="flex items-center justify-between border-b border-slate-200/60 dark:border-slate-700/60 bg-white/70 dark:bg-slate-900/70 backdrop-blur-md px-8 py-3 sticky top-0 z-20"
+      >
+        <div class="flex items-center gap-8">
+          <div class="flex items-center gap-3 text-primary">
+            <div
+              class="size-8 bg-primary rounded-lg flex items-center justify-center text-white"
+            >
+              <span class="material-symbols-outlined text-xl"
+                >rocket_launch</span
+              >
+            </div>
+            <h2
+              class="text-slate-900 dark:text-white text-xl font-bold tracking-tight"
+            >
+              Orbit
+            </h2>
+          </div>
+          <nav class="hidden md:flex items-center gap-6">
+            <a
+              class="text-slate-600 dark:text-slate-300 text-sm font-medium hover:text-primary transition-colors"
+              href="#"
+              >Dashboard</a
+            >
+            <a
+              class="text-slate-900 dark:text-white text-sm font-semibold border-b-2 border-primary pb-1"
+              href="#"
+              >Projects</a
+            >
+            <a
+              class="text-slate-600 dark:text-slate-300 text-sm font-medium hover:text-primary transition-colors"
+              href="#"
+              >Teams</a
+            >
+            <a
+              class="text-slate-600 dark:text-slate-300 text-sm font-medium hover:text-primary transition-colors"
+              href="#"
+              >Reports</a
+            >
+          </nav>
+        </div>
+        <div class="flex items-center gap-4">
+          <div class="relative hidden sm:block">
+            <span
+              class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-lg"
+              >search</span
+            >
+            <input
+              class="w-64 pl-10 pr-4 py-2 bg-slate-100 dark:bg-slate-800 border-none rounded-lg text-sm focus:ring-2 focus:ring-primary/20 placeholder:text-slate-500 transition-all"
+              placeholder="Search tasks..."
+              type="text"
+            />
+          </div>
+          <button
+            class="p-2 text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors"
+          >
+            <span class="material-symbols-outlined">notifications</span>
+          </button>
+          <div class="h-8 w-[1px] bg-slate-200 dark:bg-slate-700 mx-1"></div>
+          <div class="flex items-center gap-2">
+            <div
+              class="size-8 rounded-full bg-slate-200 overflow-hidden ring-2 ring-white dark:ring-slate-800"
+            >
+              <img
+                alt="User Profile"
+                class="w-full h-full object-cover"
+                data-alt="Professional male user profile portrait"
+                src="https://lh3.googleusercontent.com/aida-public/AB6AXuC915AK5cWnKp3Db8zZt2v0IfghtYomKJwiasFVWoR-RPmTEpr6y4qhDC4FZ2E7dJ4fkLgwSuF7Bz6DwCwt03wXSikMSGAJLY4KIjxaAytUlXjOdB3qzrt4OlhZY1Q8fzp4J650fQZ0YhPx6QyU7IJbcp3nzUl44JAhUI4SvLeQads4pPq7GpEoSXh-ngxHZOb0hOgtJrfggUSuapDfgwpQEfk5wHSiuV5-9cd1gAQTSlbFvmhklfQ9z-NbPXGj8mwQrMckEflTRj8"
+              />
+            </div>
+          </div>
+        </div>
+      </header>
+      <!-- Sub-header: Board Actions & Title -->
+      <div class="px-8 py-6">
+        <div class="flex flex-wrap items-center justify-between gap-4 mb-2">
+          <nav
+            class="flex items-center gap-2 text-sm text-slate-500 dark:text-slate-400 mb-1"
+          >
+            <a class="hover:text-primary transition-colors" href="#"
+              >Projects</a
+            >
+            <span class="material-symbols-outlined text-xs">chevron_right</span>
+            <span class="text-slate-900 dark:text-slate-200 font-medium"
+              >Q4 Marketing Launch</span
+            >
+          </nav>
+          <div class="flex items-center gap-3">
+            <button
+              class="flex items-center gap-2 px-3 py-1.5 text-sm font-semibold bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg shadow-sm hover:bg-slate-50 dark:hover:bg-slate-700 transition-all"
+            >
+              <span class="material-symbols-outlined text-lg">arrow_back</span>
+              Back to Boards
+            </button>
+            <button
+              class="flex items-center gap-2 px-4 py-1.5 text-sm font-bold bg-primary text-white rounded-lg shadow-md hover:bg-blue-700 transition-all"
+            >
+              <span class="material-symbols-outlined text-lg">share</span>
+              Share
+            </button>
+          </div>
+        </div>
+        <div class="flex items-center justify-between gap-4">
+          <div class="flex items-center gap-3">
+            <h1
+              class="text-3xl font-black text-slate-900 dark:text-white tracking-tight"
+            >
+              Q4 Marketing Launch
+            </h1>
+            <button
+              class="p-1.5 text-slate-400 hover:text-primary hover:bg-primary/10 rounded-lg transition-all"
+            >
+              <span class="material-symbols-outlined text-xl">edit</span>
+            </button>
+            <div class="flex -space-x-2 ml-4">
+              <img
+                alt="Member"
+                class="inline-block h-8 w-8 rounded-full ring-2 ring-white dark:ring-slate-900"
+                data-alt="Female team member portrait"
+                src="https://lh3.googleusercontent.com/aida-public/AB6AXuCCMvdEl1QzobqOux635hg4eY2a896Y7JzaSYIx9mRRCmlDXtdDHd2A1j8oiUvJ0shc_ySPqhzYmWW_7VvUFt5rvhr4GE0-D8Y3Kee-CLNKtR80_eSfFvIe-DMAOGJOnPcYvCzAOixjgB12BqrM-D5trnnIZyD8gfXaB_U4_eZqUQy4jWGAK7WYskJjK6NL41A3eMv3wcAeMWuJCDnpgJdsuwEtKaB0k4NybZskHNDpOU4jFXvSw4Lk7VJW4CoxGR4sjb5CL9LE0uY"
+              />
+              <img
+                alt="Member"
+                class="inline-block h-8 w-8 rounded-full ring-2 ring-white dark:ring-slate-900"
+                data-alt="Smiling team member portrait"
+                src="https://lh3.googleusercontent.com/aida-public/AB6AXuDDosDKOxCVIr7nCLiRlUJUF-aNgKOil_hTKwbXpCwOpT9AoZK_krfF8x9c34W9204jPXnSh7ucHHLakKBdx_inizqQvkAV7H6OUY-KPNaScW3G52SKDfH7exV2_5OfZgDergPPTjwr2cHzXhsnLb_-R2xU88ibnsJuDlEXi68lW2QkB90F6QuS5MJy7hHkZAHnmRz4X6X7eGEgKPEIGh9Q1_r-Si6MZ6CyLOkT3pVfootfUjMWJBBh4AoQ-81-2kBmYaAQhmYhUMI"
+              />
+              <img
+                alt="Member"
+                class="inline-block h-8 w-8 rounded-full ring-2 ring-white dark:ring-slate-900"
+                data-alt="Male team member portrait"
+                src="https://lh3.googleusercontent.com/aida-public/AB6AXuB5Soh5b4bQzcY9c2MlcHsWqNQoSB2wVAAlEEZmcPe2fLu32lIgeKG0RMuZ0nBFvP1hUtCv81Muk-wmUJ0jOUZcLDSKfdQCw5_54QKIV7F-NXmab1jSCZah_RGrKyzWNVh5yleub0iF_glAor0ULGNkXHD-PBObYUaw12QDFJlAuW1S-9VbCLl3RaUe6_PkJp4fLPWsCTxnbH5mybigdd7j2u_ij6ye4D8KKdQE3GaYn4D1orXtBzSnGFHBygE9_Po64_KEh7KthNo"
+              />
+              <div
+                class="flex items-center justify-center h-8 w-8 rounded-full ring-2 ring-white dark:ring-slate-900 bg-slate-100 dark:bg-slate-800 text-xs font-bold text-slate-600 dark:text-slate-400"
+              >
+                +5
+              </div>
+            </div>
+          </div>
+          <div
+            class="flex items-center gap-2 bg-white/50 dark:bg-slate-800/50 p-1 rounded-xl border border-slate-200/60 dark:border-slate-700/60"
+          >
+            <button
+              class="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-white dark:bg-slate-700 shadow-sm text-primary text-sm font-bold"
+            >
+              <span class="material-symbols-outlined text-lg">view_kanban</span>
+              Board
+            </button>
+            <button
+              class="flex items-center gap-2 px-3 py-1.5 rounded-lg text-slate-500 dark:text-slate-400 text-sm font-medium hover:bg-white/50 dark:hover:bg-slate-700/50"
+            >
+              <span class="material-symbols-outlined text-lg">table_chart</span>
+              Table
+            </button>
+            <button
+              class="flex items-center gap-2 px-3 py-1.5 rounded-lg text-slate-500 dark:text-slate-400 text-sm font-medium hover:bg-white/50 dark:hover:bg-slate-700/50"
+            >
+              <span class="material-symbols-outlined text-lg">timeline</span>
+              Timeline
+            </button>
+          </div>
+        </div>
+      </div>
+      <!-- Kanban Board Content -->
+      <main
+        class="flex-1 overflow-x-auto custom-scrollbar px-8 pb-10 kanban-container"
+      >
+        <div class="flex h-full gap-6 min-w-max">
+          <!-- Column: To Do -->
+          <div
+            class="w-80 flex flex-col bg-slate-200/30 dark:bg-slate-800/40 rounded-xl p-3 border border-slate-200/50 dark:border-slate-700/50"
+          >
+            <div class="flex items-center justify-between mb-4 px-1">
+              <div class="flex items-center gap-2">
+                <h3
+                  class="text-sm font-bold text-slate-900 dark:text-white uppercase tracking-wider"
+                >
+                  To Do
+                </h3>
+                <span
+                  class="bg-slate-200 dark:bg-slate-700 px-2 py-0.5 rounded text-xs font-bold text-slate-600 dark:text-slate-400"
+                  >4</span
+                >
+              </div>
+              <button
+                class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200"
+              >
+                <span class="material-symbols-outlined text-lg"
+                  >more_horiz</span
+                >
+              </button>
+            </div>
+            <div
+              class="flex flex-col gap-3 flex-1 overflow-y-auto custom-scrollbar pr-1"
+            >
+              <!-- Card 1 -->
+              <div
+                class="bg-white dark:bg-slate-800 p-4 rounded-lg shadow-sm border border-slate-200 dark:border-slate-700 hover:shadow-md transition-shadow group cursor-grab active:cursor-grabbing"
+              >
+                <div class="flex items-start justify-between mb-2">
+                  <span
+                    class="px-2 py-0.5 rounded bg-blue-100 dark:bg-blue-900/40 text-blue-600 dark:text-blue-400 text-[10px] font-bold uppercase tracking-tight"
+                    >Strategy</span
+                  >
+                  <span
+                    class="material-symbols-outlined text-slate-300 group-hover:text-slate-400 text-lg"
+                    >drag_indicator</span
+                  >
+                </div>
+                <h4
+                  class="text-sm font-semibold text-slate-900 dark:text-slate-100 leading-snug mb-3"
+                >
+                  Define target audience for social ads
+                </h4>
+                <div class="flex items-center justify-between mt-auto">
+                  <div class="flex items-center gap-3 text-slate-400">
+                    <div class="flex items-center gap-1">
+                      <span class="material-symbols-outlined text-sm"
+                        >chat_bubble</span
+                      ><span class="text-xs">3</span>
+                    </div>
+                    <div class="flex items-center gap-1">
+                      <span class="material-symbols-outlined text-sm"
+                        >attach_file</span
+                      ><span class="text-xs">1</span>
+                    </div>
+                  </div>
+                  <img
+                    alt="Assignee"
+                    class="size-6 rounded-full"
+                    data-alt="Team member small avatar"
+                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuCNydcxfhrB0ZJQ3kVeMsFxFqFaZtbOGOfFRjMwOvvNEMupvz101dEHxuKQvfdwn9W2Mr2FkE1JzyfXVLrlqxwrqTCx7seZOFIpT0_wdjy5diucss9W1GXYD8D78Q5SrMg4MgdEfaK_QzX6E34fTKiJC0utrk2xrNYlvDej6FnTdA4yPfOE09kTu0LJ2I42-KTth7q3tvdSQFWpBtXQ1axkpELloy3POAZYYFU80bARI893WGdmnVnaJKotoSZb_ZU7wK4tppdb1to"
+                  />
+                </div>
+              </div>
+              <!-- Card 2 -->
+              <div
+                class="bg-white dark:bg-slate-800 p-4 rounded-lg shadow-sm border border-slate-200 dark:border-slate-700 hover:shadow-md transition-shadow group cursor-grab"
+              >
+                <div class="mb-2">
+                  <span
+                    class="px-2 py-0.5 rounded bg-orange-100 dark:bg-orange-900/40 text-orange-600 dark:text-orange-400 text-[10px] font-bold uppercase tracking-tight"
+                    >Content</span
+                  >
+                </div>
+                <h4
+                  class="text-sm font-semibold text-slate-900 dark:text-slate-100 leading-snug mb-3"
+                >
+                  Draft blog post regarding product features
+                </h4>
+                <div class="flex items-center justify-between">
+                  <div class="flex items-center gap-3 text-slate-400">
+                    <div
+                      class="flex items-center gap-1 text-red-500 font-medium"
+                    >
+                      <span class="material-symbols-outlined text-sm"
+                        >schedule</span
+                      ><span class="text-xs">Today</span>
+                    </div>
+                  </div>
+                  <div class="flex -space-x-1">
+                    <img
+                      alt="Assignee"
+                      class="size-6 rounded-full ring-2 ring-white dark:ring-slate-800"
+                      data-alt="Team member small avatar"
+                      src="https://lh3.googleusercontent.com/aida-public/AB6AXuAVTZTiOb1r0Ay8iU6k8cW509kXYYoU6Z42-V_QrHh-A0KLO6dVXRx6USE3Mm6cxwclgA2yb_9WcegQBZfgIs1IMY97SPBOZGoML8AdArsoyPm8TD4H9rZlUHhOhlivSCw4Jo80c_YoDmxfO6W-D3HTKEC6-q1qRUq7eS1e37lDYmQGZga-i-mCLuSkuBX7IZQtozcEkALZN5W15JXsGCPb0d3Z9G_3ppb7puVkIHQyuptkX21C1tatNIhPXOfhHFy5cplgTTJpUdU"
+                    />
+                    <img
+                      alt="Assignee"
+                      class="size-6 rounded-full ring-2 ring-white dark:ring-slate-800"
+                      data-alt="Team member small avatar"
+                      src="https://lh3.googleusercontent.com/aida-public/AB6AXuDXBfYypwoXj4xd5LuADlCQWERBavmvyryQOIVwUYM-Tl8Be4mwKPB6EDn9zfpYFkLqsXvRQ3E3_t7DKEYlODNZeNzsFxA67eDlIIojzugXLjwsvksV1qt0MgFojj4PKoU5vnlos6HjvLSFEpMmuhQ9tokdkl8KBcsctywl3swktS1E3Rg4eDuEbca8dhl6PxWAnGDI_WdrG5t8bpKRDgD_zWTl5WB1Iwf1Vara53ngqdHrRKSjBycW4v9qqrwu9e_OO7edBgUrpJA"
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+            <button
+              class="mt-4 flex items-center justify-center gap-2 py-2 px-4 rounded-lg bg-white/50 dark:bg-slate-700/50 text-slate-600 dark:text-slate-300 text-sm font-semibold hover:bg-white dark:hover:bg-slate-700 transition-all border border-dashed border-slate-300 dark:border-slate-600"
+            >
+              <span class="material-symbols-outlined text-lg">add</span>
+              Dodaj kartę
+            </button>
+          </div>
+          <!-- Column: In Progress -->
+          <div
+            class="w-80 flex flex-col bg-slate-200/30 dark:bg-slate-800/40 rounded-xl p-3 border border-slate-200/50 dark:border-slate-700/50"
+          >
+            <div class="flex items-center justify-between mb-4 px-1">
+              <div class="flex items-center gap-2">
+                <h3
+                  class="text-sm font-bold text-slate-900 dark:text-white uppercase tracking-wider"
+                >
+                  In Progress
+                </h3>
+                <span
+                  class="bg-primary/20 px-2 py-0.5 rounded text-xs font-bold text-primary"
+                  >2</span
+                >
+              </div>
+              <button
+                class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200"
+              >
+                <span class="material-symbols-outlined text-lg"
+                  >more_horiz</span
+                >
+              </button>
+            </div>
+            <div
+              class="flex flex-col gap-3 flex-1 overflow-y-auto custom-scrollbar pr-1"
+            >
+              <!-- Card 1 -->
+              <div
+                class="bg-white dark:bg-slate-800 p-4 rounded-lg shadow-sm border border-slate-200 dark:border-slate-700 hover:shadow-md transition-shadow group"
+              >
+                <div class="mb-2">
+                  <span
+                    class="px-2 py-0.5 rounded bg-purple-100 dark:bg-purple-900/40 text-purple-600 dark:text-purple-400 text-[10px] font-bold uppercase tracking-tight"
+                    >Design</span
+                  >
+                </div>
+                <h4
+                  class="text-sm font-semibold text-slate-900 dark:text-slate-100 leading-snug mb-3"
+                >
+                  Design high-fidelity mockups for landing page
+                </h4>
+                <div
+                  class="w-full bg-slate-100 dark:bg-slate-700 h-1.5 rounded-full mb-3"
+                >
+                  <div class="bg-primary h-1.5 rounded-full w-3/4"></div>
+                </div>
+                <div class="flex items-center justify-between">
+                  <div class="flex items-center gap-2 text-slate-400">
+                    <span class="material-symbols-outlined text-sm"
+                      >checklist</span
+                    >
+                    <span class="text-xs">6/8</span>
+                  </div>
+                  <img
+                    alt="Assignee"
+                    class="size-6 rounded-full"
+                    data-alt="Team member small avatar"
+                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuAyVtQbObHyNG-8BtHfGwsm9liOIUGhpMr2I-qixT48duJbMYZl2G1krXanGk4HYMqagWe1gUIcDlme8kUUCMPdoMK4m8X_4gmdeKHUKM2rL8lngqcc5gCKGbUrQ2VF94a3ypPYbVo20CdcZROsN8c3Y_Dg0w_YiLXoCPW0AAUKR8qnqTRxo0ovEIGdBt5sNS_2wruVy3QRrK1c-kQl3NvLut9ZthrEzwljwluEFYKTGngQLa7x-hvbFBvdmgPkln6n9JjPKlz3fJI"
+                  />
+                </div>
+              </div>
+              <!-- Card 2 -->
+              <div
+                class="bg-white dark:bg-slate-800 p-4 rounded-lg shadow-sm border border-slate-200 dark:border-slate-700 hover:shadow-md transition-shadow group"
+              >
+                <div class="mb-2">
+                  <span
+                    class="px-2 py-0.5 rounded bg-green-100 dark:bg-green-900/40 text-green-600 dark:text-green-400 text-[10px] font-bold uppercase tracking-tight"
+                    >Marketing</span
+                  >
+                </div>
+                <h4
+                  class="text-sm font-semibold text-slate-900 dark:text-slate-100 leading-snug mb-3"
+                >
+                  Coordinate with influencers for launch week
+                </h4>
+                <div class="flex items-center justify-between">
+                  <div class="flex items-center gap-3 text-slate-400">
+                    <div class="flex items-center gap-1">
+                      <span class="material-symbols-outlined text-sm"
+                        >schedule</span
+                      ><span class="text-xs">Oct 24</span>
+                    </div>
+                  </div>
+                  <img
+                    alt="Assignee"
+                    class="size-6 rounded-full"
+                    data-alt="Team member small avatar"
+                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuAKcMQ3518xX8VI1IA6GUNd266QPJHlEQVFfVf7eC41fBCI9-vXudTwkafgn0L9pECwdzl2UX3UG70r-83_wSHqPkTq0VI0iqtIf8CnJkmdkZJBSTD8hR38cE93TZybBbJEi5jDNIxT_OTfYDHWSiz2G7FRpxGsZEQkXU6PiM-oiGL8vcuyNrm2jpys3J2Sqz74IJgbiwOU6ZW0xj6i7zr2loCHIO_IZ3kFw8om_VmdrQ6dntr1zNQ8hH8iXvx52uVKe_Bn5gPxwr0"
+                  />
+                </div>
+              </div>
+            </div>
+            <button
+              class="mt-4 flex items-center justify-center gap-2 py-2 px-4 rounded-lg bg-white/50 dark:bg-slate-700/50 text-slate-600 dark:text-slate-300 text-sm font-semibold hover:bg-white dark:hover:bg-slate-700 transition-all border border-dashed border-slate-300 dark:border-slate-600"
+            >
+              <span class="material-symbols-outlined text-lg">add</span>
+              Dodaj kartę
+            </button>
+          </div>
+          <!-- Column: Done -->
+          <div
+            class="w-80 flex flex-col bg-slate-200/30 dark:bg-slate-800/40 rounded-xl p-3 border border-slate-200/50 dark:border-slate-700/50 opacity-90"
+          >
+            <div class="flex items-center justify-between mb-4 px-1">
+              <div class="flex items-center gap-2">
+                <h3
+                  class="text-sm font-bold text-slate-900 dark:text-white uppercase tracking-wider text-green-600"
+                >
+                  Done
+                </h3>
+                <span
+                  class="bg-green-100 dark:bg-green-900/40 px-2 py-0.5 rounded text-xs font-bold text-green-600"
+                  >1</span
+                >
+              </div>
+              <button
+                class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200"
+              >
+                <span class="material-symbols-outlined text-lg"
+                  >more_horiz</span
+                >
+              </button>
+            </div>
+            <div
+              class="flex flex-col gap-3 flex-1 overflow-y-auto custom-scrollbar pr-1"
+            >
+              <!-- Card 1 -->
+              <div
+                class="bg-white/60 dark:bg-slate-800/60 p-4 rounded-lg shadow-sm border border-slate-200 dark:border-slate-700 group grayscale hover:grayscale-0 transition-all"
+              >
+                <div class="mb-2">
+                  <span
+                    class="px-2 py-0.5 rounded bg-slate-100 dark:bg-slate-700 text-slate-500 dark:text-slate-400 text-[10px] font-bold uppercase tracking-tight line-through"
+                    >Research</span
+                  >
+                </div>
+                <h4
+                  class="text-sm font-semibold text-slate-500 dark:text-slate-400 leading-snug mb-3 line-through"
+                >
+                  Audit competitor social media channels
+                </h4>
+                <div class="flex items-center justify-between">
+                  <div class="flex items-center gap-1 text-green-500 font-bold">
+                    <span class="material-symbols-outlined text-lg"
+                      >check_circle</span
+                    >
+                    <span class="text-xs">Completed</span>
+                  </div>
+                  <img
+                    alt="Assignee"
+                    class="size-6 rounded-full"
+                    data-alt="Team member small avatar"
+                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuDsMQ_0NIwIQI2ITAWqJUpXcqRqVt45b75K2Zt4oZWNHlKHe2Jnu8ge_LcWZ8C7kNPvs-QPNLHV8mAcSG_NTmnSnD8E4nKAkgAqvMHR4X_1XntI9sWylv7HxM1kRBD77cgVfvMU6-gRFst8IB_VFo1HGMWdNBm6wzyCfInCm8OVXp9mIW6_cNaFbIobFhECUTfVQLy5zFSWhvxvGZjGsbC1N2D63zLSTMZSjXoAeYfDJlVnovDju3KQ4S75JDbxqp6xl-5RT8AlFTg"
+                  />
+                </div>
+              </div>
+            </div>
+            <button
+              class="mt-4 flex items-center justify-center gap-2 py-2 px-4 rounded-lg bg-white/50 dark:bg-slate-700/50 text-slate-600 dark:text-slate-300 text-sm font-semibold hover:bg-white dark:hover:bg-slate-700 transition-all border border-dashed border-slate-300 dark:border-slate-600"
+            >
+              <span class="material-symbols-outlined text-lg">add</span>
+              Dodaj kartę
+            </button>
+          </div>
+          <!-- Add List Button -->
+          <div class="w-80 flex flex-col items-center justify-start pt-10">
+            <button
+              class="w-full flex items-center justify-center gap-2 py-4 px-4 rounded-xl bg-white/20 dark:bg-white/5 border-2 border-dashed border-slate-400/30 dark:border-slate-600/30 text-slate-600 dark:text-slate-400 text-base font-bold hover:bg-white/40 dark:hover:bg-white/10 hover:border-primary/50 hover:text-primary transition-all group"
+            >
+              <div
+                class="p-1 rounded-lg bg-slate-200/50 dark:bg-slate-700/50 group-hover:bg-primary group-hover:text-white transition-all"
+              >
+                <span class="material-symbols-outlined">add</span>
+              </div>
+              Dodaj listę
+            </button>
+          </div>
+        </div>
+      </main>
+      <!-- Board Toolbar Footer -->
+      <div
+        class="fixed bottom-6 left-1/2 -translate-x-1/2 flex items-center gap-4 bg-white/90 dark:bg-slate-900/90 backdrop-blur-lg px-6 py-3 rounded-full shadow-2xl border border-slate-200/60 dark:border-slate-700/60 z-30"
+      >
+        <button
+          class="flex items-center gap-2 text-slate-600 dark:text-slate-300 font-medium hover:text-primary transition-colors text-sm"
+        >
+          <span class="material-symbols-outlined text-lg">filter_list</span>
+          Filter
+        </button>
+        <div class="h-4 w-[1px] bg-slate-300 dark:bg-slate-700"></div>
+        <button
+          class="flex items-center gap-2 text-slate-600 dark:text-slate-300 font-medium hover:text-primary transition-colors text-sm"
+        >
+          <span class="material-symbols-outlined text-lg">sort</span>
+          Sort
+        </button>
+        <div class="h-4 w-[1px] bg-slate-300 dark:bg-slate-700"></div>
+        <button
+          class="flex items-center gap-2 text-slate-600 dark:text-slate-300 font-medium hover:text-primary transition-colors text-sm"
+        >
+          <span class="material-symbols-outlined text-lg">visibility</span>
+          View Options
+        </button>
+        <div class="h-4 w-[1px] bg-slate-300 dark:bg-slate-700"></div>
+        <button
+          class="flex items-center justify-center size-8 bg-slate-100 dark:bg-slate-800 rounded-full hover:bg-primary hover:text-white transition-all"
+        >
+          <span class="material-symbols-outlined text-xl">settings</span>
+        </button>
+      </div>
+    </div>
+  </body>
+</html>
