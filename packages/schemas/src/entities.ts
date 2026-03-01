@@ -12,12 +12,24 @@ export const UserEntitySchema = z.object({
 });
 export type UserEntity = z.infer<typeof UserEntitySchema>;
 
+/** Minimal user as in board members list (id, name, email only) */
+export const BoardMemberUserSchema = z.object({
+  id: z.string().uuid(),
+  name: z.string().optional(),
+  email: z.string().email(),
+});
+export type BoardMemberUser = z.infer<typeof BoardMemberUserSchema>;
+
 export const BoardEntitySchema = z.object({
   id: z.string().uuid(),
   title: z.string(),
   description: z.string().nullable().optional(),
   owner: UserEntitySchema.optional(),
   ownerId: z.string().uuid().optional(),
+  type: z.string().optional(),
+  priorityLevel: z.number().optional(),
+  members: z.array(BoardMemberUserSchema).optional(),
+  isFavourite: z.boolean().optional(),
   createdAt: dateSchema,
   updatedAt: dateSchema,
 });

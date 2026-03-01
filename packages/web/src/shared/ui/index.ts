@@ -1,10 +1,16 @@
 export { Button } from './Button';
+export { Spinner } from './Spinner';
 export { Input } from './Input';
+export { Select } from './Select';
+export type { SelectOption } from './Select';
+export { addToastGlobal, setGlobalToastHandler } from './Toast';
 export { Textarea } from './Textarea';
 export { Card } from './Card';
 export { Modal } from './Modal';
 export { Toaster, ToastProvider, useToast } from './Toast';
 export type { ToastVariant } from './Toast';
 export { Avatar } from './Avatar';
+export { BoardAvatars } from './BoardAvatars';
+export type { BoardAvatarUser } from './BoardAvatars';
 export { Navbar } from './Navbar';
 export { Footer } from './Footer';

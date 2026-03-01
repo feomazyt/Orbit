@@ -1,4 +1,5 @@
-import { Entity, PrimaryKey, Property, Unique } from '@mikro-orm/core';
+import { Collection, Entity, OneToMany, PrimaryKey, Property, Unique } from '@mikro-orm/core';
+import { BoardMember } from './BoardMember';
 
 @Entity({ tableName: 'users' })
 export class User {
@@ -14,6 +15,9 @@ export class User {
 
   @Property({ type: 'string', nullable: true })
   name?: string;
+
+  @OneToMany(() => BoardMember, (bm: BoardMember) => bm.user)
+  boardMembers = new Collection<BoardMember>(this);
 
   @Property({ type: 'Date' })
   createdAt = new Date();

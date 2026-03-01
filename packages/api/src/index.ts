@@ -6,6 +6,7 @@ import { listsRouter } from './routes/lists.js';
 import { cardsRouter } from './routes/cards.js';
 import { commentsRouter } from './routes/comments.js';
 import { healthRouter } from './routes/health.js';
+import { usersRouter } from './routes/users.js';
 import { corsMiddleware } from './middleware/cors.js';
 import { requestLogger } from './middleware/requestLogger.js';
 import { notFound } from './middleware/notFound.js';
@@ -28,6 +29,7 @@ app.use('/boards', boardsRouter);
 app.use('/lists', listsRouter);
 app.use('/cards', cardsRouter);
 app.use('/comments', commentsRouter);
+app.use('/users', usersRouter);
 
 app.use(notFound);
 app.use(errorHandler);

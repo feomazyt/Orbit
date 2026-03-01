@@ -68,11 +68,14 @@ const router = createBrowserRouter([
           return { Component: UIPage };
         },
       },
+      {
+        path: '*',
+        lazy: async () => {
+          const { NotFoundPage } = await import('@/app/pages/NotFoundPage');
+          return { Component: NotFoundPage };
+        },
+      },
     ],
-  },
-  {
-    path: '*',
-    element: <Navigate to="/" replace />,
   },
 ]);
 

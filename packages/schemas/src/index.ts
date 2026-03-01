@@ -9,9 +9,14 @@ export {
   CreateBoardBodySchema,
   UpdateBoardBodySchema,
   ListBoardsQuerySchema,
+  AddBoardMemberBodySchema,
+  BOARD_TYPES,
+  PRIORITY_LEVELS,
   type CreateBoardBody,
   type UpdateBoardBody,
   type ListBoardsQuery,
+  type AddBoardMemberBody,
+  type BoardType,
 } from './board.schemas.js';
 
 export {

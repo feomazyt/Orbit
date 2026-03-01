@@ -1,11 +1,14 @@
 import {
+  Collection,
   Entity,
   Index,
   ManyToOne,
+  OneToMany,
   PrimaryKey,
   Property,
 } from '@mikro-orm/core';
 import { User } from './User';
+import { BoardMember } from './BoardMember';
 
 @Entity({ tableName: 'boards' })
 @Index({ properties: ['owner'] })
@@ -21,6 +24,17 @@ export class Board {
 
   @Property({ type: 'string', nullable: true })
   description?: string;
+
+  /** Board type, e.g. 'kanban', 'scrum', 'personal' */
+  @Property({ type: 'string', default: 'kanban' })
+  type = 'kanban';
+
+  /** Priority level (higher = more important), e.g. 0–3 */
+  @Property({ type: 'smallint', default: 0 })
+  priorityLevel = 0;
+
+  @OneToMany(() => BoardMember, (bm: BoardMember) => bm.board)
+  members = new Collection<BoardMember>(this);
 
   @Property({ type: 'Date' })
   createdAt = new Date();

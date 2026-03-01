@@ -12,6 +12,24 @@ export class UserRepository {
     return this.em.findOne(User, { id });
   }
 
+  /** Search users by name or email (case-insensitive). Excludes one user by id. */
+  search(query: string, excludeUserId: string, limit: number = 20): Promise<User[]> {
+    const q = query.trim();
+    if (!q) return Promise.resolve([]);
+    const pattern = `%${q}%`;
+    return this.em.find(
+      User,
+      {
+        id: { $ne: excludeUserId },
+        $or: [
+          { name: { $ilike: pattern } },
+          { email: { $ilike: pattern } },
+        ],
+      },
+      { limit }
+    );
+  }
+
   async create(data: { email: string; passwordHash: string; name?: string }): Promise<User> {
     const user = this.em.create(User, {
       email: data.email,

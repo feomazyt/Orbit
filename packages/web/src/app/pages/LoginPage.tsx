@@ -1,13 +1,22 @@
-import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { Input } from '@/shared/ui';
+import { useState, useEffect } from 'react';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
+import { Input, useToast } from '@/shared/ui';
 import { useLoginMutation } from '@/shared/api';
 
 export function LoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [searchParams, setSearchParams] = useSearchParams();
   const [login, { isLoading, error }] = useLoginMutation();
   const navigate = useNavigate();
+  const { addToast } = useToast();
+
+  useEffect(() => {
+    if (searchParams.get('reason') === 'session_expired') {
+      addToast('Zaloguj się, aby kontynuować.', 'info');
+      setSearchParams({}, { replace: true });
+    }
+  }, [addToast, searchParams, setSearchParams]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -64,12 +73,13 @@ export function LoginPage() {
           <h1 className="text-text-main dark:text-slate-100 text-[28px] font-bold leading-tight text-center mb-8">
             Zaloguj się
           </h1>
-          <form onSubmit={handleSubmit} className="space-y-5">
+          <form onSubmit={handleSubmit} className="space-y-5" aria-label="Formularz logowania">
             <div className="space-y-2">
-              <label className="block text-text-main dark:text-slate-200 text-sm font-semibold">
+              <label htmlFor="login-email" className="block text-text-main dark:text-slate-200 text-sm font-semibold">
                 E-mail
               </label>
               <Input
+                id="login-email"
                 type="email"
                 placeholder="wpisz swój e-mail"
                 autoComplete="email"
@@ -80,21 +90,24 @@ export function LoginPage() {
                   <span className="material-symbols-outlined">mail</span>
                 }
                 className="border-border-light dark:border-slate-700 focus:ring-2 focus:ring-primary/20 focus:border-primary"
+                aria-describedby={errorMessage ? 'login-error' : undefined}
+                aria-invalid={Boolean(errorMessage)}
               />
             </div>
             <div className="space-y-2">
               <div className="flex justify-between items-center">
-                <label className="block text-text-main dark:text-slate-200 text-sm font-semibold">
+                <label htmlFor="login-password" className="block text-text-main dark:text-slate-200 text-sm font-semibold">
                   Hasło
                 </label>
                 <Link
                   to="/forgot-password"
-                  className="text-primary text-xs font-medium hover:underline"
+                  className="text-primary text-xs font-medium hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 rounded"
                 >
                   Zapomniałeś hasła?
                 </Link>
               </div>
               <Input
+                id="login-password"
                 type="password"
                 placeholder="••••••••"
                 autoComplete="current-password"
@@ -105,16 +118,19 @@ export function LoginPage() {
                   <span className="material-symbols-outlined">lock</span>
                 }
                 className="border-border-light dark:border-slate-700 focus:ring-2 focus:ring-primary/20 focus:border-primary"
+                aria-describedby={errorMessage ? 'login-error' : undefined}
+                aria-invalid={Boolean(errorMessage)}
               />
             </div>
             <div className="flex items-center gap-2">
               <input
-                id="remember"
+                id="login-remember"
                 type="checkbox"
-                className="w-4 h-4 rounded border-border-light text-primary focus:ring-primary"
+                className="w-4 h-4 rounded border-border-light text-primary focus:ring-primary focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
+                aria-describedby={undefined}
               />
               <label
-                htmlFor="remember"
+                htmlFor="login-remember"
                 className="text-text-muted dark:text-slate-400 text-sm cursor-pointer select-none"
               >
                 Zapamiętaj mnie
@@ -122,8 +138,10 @@ export function LoginPage() {
             </div>
             {errorMessage && (
               <p
+                id="login-error"
                 className="text-sm text-red-600 dark:text-red-400"
                 role="alert"
+                aria-live="assertive"
               >
                 {errorMessage}
               </p>
@@ -131,7 +149,8 @@ export function LoginPage() {
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full h-10 bg-primary hover:bg-primary/90 text-white font-semibold rounded-md shadow-lg shadow-primary/20 transition-all flex items-center justify-center gap-2 mt-2 active:scale-[0.98] disabled:opacity-50"
+              className="w-full h-10 bg-primary hover:bg-primary/90 text-white font-semibold rounded-md shadow-lg shadow-primary/20 transition-all flex items-center justify-center gap-2 mt-2 active:scale-[0.98] disabled:opacity-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-white"
+              aria-describedby={errorMessage ? 'login-error' : undefined}
             >
               {isLoading ? 'Logowanie…' : 'Zaloguj się'}
               <span className="material-symbols-outlined text-lg">

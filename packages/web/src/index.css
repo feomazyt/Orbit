@@ -4,6 +4,7 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 /* Design tokens — sekcje 9.1–9.3 specyfikacji + HTML mockupy */
+/* A11y: kolory tekstu/tła spełniają WCAG AA (kontrast min. 4.5:1 dla tekstu) */
 @theme {
   /* 9.1 Kolory */
   --color-primary: #2463eb;
@@ -63,6 +64,19 @@ body {
   line-height: var(--leading-normal);
 }
 
+/* A11y: widoczny focus (min. 4.5:1 kontrast), tylko przy nawigacji klawiaturą */
+:where(a, button, [role="button"], input, select, textarea, [tabindex]:not([tabindex="-1"])):focus {
+  outline: none;
+}
+:where(a, button, [role="button"], input, select, textarea, [tabindex]:not([tabindex="-1"])):focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+/* Przyciski i linki – ring zamiast outline, gdy używają własnego focus-visible */
+:where(button, a):focus-visible {
+  outline: none;
+}
+
 .material-symbols-outlined {
   font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
 }
@@ -72,4 +86,29 @@ body {
 }
 .dark .bg-soft-gradient {
   background: radial-gradient(circle at top right, #1e293b, #111621);
+}
+
+/* Kanban board */
+.kanban-container {
+  height: calc(100vh - 220px);
+  min-height: 400px;
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+  height: 8px;
+  width: 8px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.05);
+  border-radius: 10px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 0, 0, 0.2);
 }

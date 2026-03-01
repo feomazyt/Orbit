@@ -9,8 +9,8 @@ type InputProps = InputHTMLAttributes<HTMLInputElement> & {
 const baseClasses =
   'w-full h-10 rounded-md border bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 placeholder:text-slate-500 dark:placeholder:text-slate-400 text-sm outline-none transition-all';
 const defaultBorder =
-  'border-slate-200 dark:border-slate-700 focus:border-primary focus:ring-2 focus:ring-primary/20';
-const errorBorder = 'border-red-500 dark:border-red-500 focus:border-red-500 focus:ring-2 focus:ring-red-500/20';
+  'border-slate-200 dark:border-slate-700 focus:border-primary focus:ring-2 focus:ring-primary/20 focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/30';
+const errorBorder = 'border-red-500 dark:border-red-500 focus:border-red-500 focus:ring-2 focus:ring-red-500/20 focus-visible:border-red-500 focus-visible:ring-2 focus-visible:ring-red-500/30';
 
 export function Input({
   className = '',

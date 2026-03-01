@@ -68,12 +68,13 @@ export function RegisterPage() {
           <h1 className="text-text-main dark:text-slate-100 text-[28px] font-bold leading-tight text-center mb-8">
             Załóż konto
           </h1>
-          <form onSubmit={handleSubmit} className="space-y-5">
+          <form onSubmit={handleSubmit} className="space-y-5" aria-label="Formularz rejestracji">
             <div className="space-y-2">
-              <label className="block text-text-main dark:text-slate-200 text-sm font-semibold">
+              <label htmlFor="register-email" className="block text-text-main dark:text-slate-200 text-sm font-semibold">
                 E-mail
               </label>
               <Input
+                id="register-email"
                 type="email"
                 placeholder="wpisz swój e-mail"
                 autoComplete="email"
@@ -84,13 +85,16 @@ export function RegisterPage() {
                   <span className="material-symbols-outlined">mail</span>
                 }
                 className="border-border-light dark:border-slate-700 focus:ring-2 focus:ring-primary/20 focus:border-primary"
+                aria-describedby={errorMessage ? 'register-error' : undefined}
+                aria-invalid={Boolean(errorMessage)}
               />
             </div>
             <div className="space-y-2">
-              <label className="block text-text-main dark:text-slate-200 text-sm font-semibold">
+              <label htmlFor="register-password" className="block text-text-main dark:text-slate-200 text-sm font-semibold">
                 Hasło
               </label>
               <Input
+                id="register-password"
                 type="password"
                 placeholder="••••••••"
                 autoComplete="new-password"
@@ -102,16 +106,19 @@ export function RegisterPage() {
                   <span className="material-symbols-outlined">lock</span>
                 }
                 className="border-border-light dark:border-slate-700 focus:ring-2 focus:ring-primary/20 focus:border-primary"
+                aria-describedby={errorMessage ? 'register-error register-password-hint' : 'register-password-hint'}
+                aria-invalid={Boolean(errorMessage)}
               />
-              <p className="text-text-muted dark:text-slate-400 text-xs">
+              <p id="register-password-hint" className="text-text-muted dark:text-slate-400 text-xs">
                 Minimum 8 znaków
               </p>
             </div>
             <div className="space-y-2">
-              <label className="block text-text-main dark:text-slate-200 text-sm font-semibold">
+              <label htmlFor="register-name" className="block text-text-main dark:text-slate-200 text-sm font-semibold">
                 Imię (opcjonalnie)
               </label>
               <Input
+                id="register-name"
                 type="text"
                 placeholder="np. Jan"
                 autoComplete="name"
@@ -121,12 +128,16 @@ export function RegisterPage() {
                   <span className="material-symbols-outlined">person</span>
                 }
                 className="border-border-light dark:border-slate-700 focus:ring-2 focus:ring-primary/20 focus:border-primary"
+                aria-describedby={errorMessage ? 'register-error' : undefined}
+                aria-invalid={Boolean(errorMessage)}
               />
             </div>
             {errorMessage && (
               <p
+                id="register-error"
                 className="text-sm text-red-600 dark:text-red-400"
                 role="alert"
+                aria-live="assertive"
               >
                 {errorMessage}
               </p>
@@ -134,7 +145,8 @@ export function RegisterPage() {
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full h-10 bg-primary hover:bg-primary/90 text-white font-semibold rounded-md shadow-lg shadow-primary/20 transition-all flex items-center justify-center gap-2 mt-2 active:scale-[0.98] disabled:opacity-50"
+              className="w-full h-10 bg-primary hover:bg-primary/90 text-white font-semibold rounded-md shadow-lg shadow-primary/20 transition-all flex items-center justify-center gap-2 mt-2 active:scale-[0.98] disabled:opacity-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-white"
+              aria-describedby={errorMessage ? 'register-error' : undefined}
             >
               {isLoading ? 'Rejestracja…' : 'Zarejestruj się'}
               <span className="material-symbols-outlined text-lg">

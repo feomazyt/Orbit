@@ -1,4 +1,4 @@
-import { createContext, useCallback, useContext, useMemo, useState, type ReactNode } from 'react';
+import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from 'react';
 
 export type ToastVariant = 'info' | 'success' | 'error';
 
@@ -16,7 +16,19 @@ type ToastContextValue = {
 
 const ToastContext = createContext<ToastContextValue | null>(null);
 
+/** Auto-hide 3–5 s (4 s) */
 const AUTO_HIDE_MS = 4000;
+
+/** Callback ustawiany przez ToastProvider – do wywołań poza React (np. baseQuery) */
+let globalAddToast: ((message: ReactNode, variant?: ToastVariant) => void) | null = null;
+
+export function setGlobalToastHandler(handler: ((message: ReactNode, variant?: ToastVariant) => void) | null) {
+  globalAddToast = handler;
+}
+
+export function addToastGlobal(message: ReactNode, variant: ToastVariant = 'info') {
+  globalAddToast?.(message, variant);
+}
 
 const variantStyles: Record<ToastVariant, string> = {
   info: 'bg-primary/10 text-primary border-primary/20',
@@ -62,7 +74,7 @@ export function Toaster() {
 
   return (
     <div
-      className="fixed bottom-6 right-6 z-[100] flex flex-col gap-3 max-w-sm w-full pointer-events-none"
+      className="fixed bottom-6 right-6 z-100 flex flex-col gap-3 max-w-sm w-full pointer-events-none"
       aria-live="polite"
     >
       <div className="flex flex-col gap-2 pointer-events-auto">
@@ -89,6 +101,12 @@ export function ToastProvider({ children }: { children: ReactNode }) {
     },
     [removeToast]
   );
+
+  // Umożliwia wywołanie toasta z baseQuery / poza React
+  useEffect(() => {
+    setGlobalToastHandler(addToast);
+    return () => setGlobalToastHandler(null);
+  }, [addToast]);
 
   const value = useMemo(
     () => ({ toasts, addToast, removeToast }),

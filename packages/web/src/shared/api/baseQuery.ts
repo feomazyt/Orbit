@@ -3,6 +3,7 @@ import type { FetchArgs, FetchBaseQueryError } from '@reduxjs/toolkit/query';
 import { getBaseUrl } from './client.js';
 import { getAuthToken } from './interceptors.js';
 import { logout } from '@/features/auth';
+import { addToastGlobal } from '@/shared/ui/Toast';
 
 const rawBaseQuery = fetchBaseQuery({
   baseUrl: getBaseUrl(),
@@ -16,8 +17,18 @@ const rawBaseQuery = fetchBaseQuery({
   },
 });
 
+function getErrorMessage(error: FetchBaseQueryError): string {
+  if (error.data && typeof error.data === 'object' && 'message' in error.data) {
+    return String((error.data as { message?: string }).message);
+  }
+  if (error.status === 404) return 'Nie znaleziono.';
+  if (error.status && error.status >= 500) return 'Błąd serwera. Spróbuj ponownie.';
+  return 'Wystąpił błąd. Spróbuj ponownie.';
+}
+
 /**
- * Wraps fetchBaseQuery to handle 401: clear token and redirect to /login.
+ * Wraps fetchBaseQuery: 401 → logout + redirect /login?reason=session_expired (LoginPage pokaże toast).
+ * Inne błędy API → toast (komponenty mogą dodatkowo pokazać własny komunikat).
  */
 export const baseQueryWithAuth: BaseQueryFn<
   string | FetchArgs,
@@ -25,9 +36,13 @@ export const baseQueryWithAuth: BaseQueryFn<
   FetchBaseQueryError
 > = async (args, api, extraOptions) => {
   const result = await rawBaseQuery(args, api, extraOptions);
-  if (result.error?.status === 401) {
-    api.dispatch(logout());
-    window.location.href = '/login';
+  if (result.error) {
+    if (result.error.status === 401) {
+      api.dispatch(logout());
+      window.location.href = '/login?reason=session_expired';
+      return result;
+    }
+    addToastGlobal(getErrorMessage(result.error), 'error');
   }
   return result;
 };

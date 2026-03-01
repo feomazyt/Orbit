@@ -10,6 +10,7 @@ import './boards.endpoints.js';
 import './lists.endpoints.js';
 import './cards.endpoints.js';
 import './comments.endpoints.js';
+import './users.endpoints.js';
 
 export {
   useLoginMutation,
@@ -21,9 +22,14 @@ export type { AuthResponse } from './auth.endpoints.js';
 export {
   useGetBoardsQuery,
   useGetBoardQuery,
+  useGetFavouriteBoardsQuery,
   useCreateBoardMutation,
   useUpdateBoardMutation,
   useDeleteBoardMutation,
+  useAddBoardMemberMutation,
+  useRemoveBoardMemberMutation,
+  useAddBoardFavouriteMutation,
+  useRemoveBoardFavouriteMutation,
 } from './boards.endpoints.js';
 
 export {
@@ -49,3 +55,9 @@ export {
   useUpdateCommentMutation,
   useDeleteCommentMutation,
 } from './comments.endpoints.js';
+
+export {
+  useSearchUsersQuery,
+  useLazySearchUsersQuery,
+} from './users.endpoints.js';
+export type { UserSearchHit } from './users.endpoints.js';
