@@ -198,7 +198,7 @@ export function BoardsPage() {
             Zarządzaj swoimi projektami i zadaniami zespołu.
           </p>
         </div>
-        <Button variant="primary" size="m" onClick={handleOpenCreate}>
+        <Button variant="primary" size="m" onClick={handleOpenCreate} data-testid="create-board-btn">
           <span className="material-symbols-outlined text-lg">add</span>
           Nowa tablica
         </Button>
@@ -218,7 +218,7 @@ export function BoardsPage() {
           <p className="text-sm text-slate-500 dark:text-slate-400 mb-6">
             Utwórz pierwszą.
           </p>
-          <Button variant="primary" size="m" onClick={handleOpenCreate}>
+          <Button variant="primary" size="m" onClick={handleOpenCreate} data-testid="create-board-btn">
             <span className="material-symbols-outlined text-lg">add</span>
             Utwórz tablicę
           </Button>

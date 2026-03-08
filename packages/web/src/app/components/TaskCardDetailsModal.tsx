@@ -1,11 +1,16 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, useCallback } from 'react';
+import { CARD_TYPES } from '@orbit/schemas';
 import {
   useGetCardQuery,
   useUpdateCardMutation,
   useGetCommentsQuery,
   useAddCommentMutation,
+  useLazySearchUsersQuery,
+  type UserSearchHit,
 } from '@/shared/api';
-import { Button, Modal, useToast } from '@/shared/ui';
+import { Button, Modal, Select, useToast } from '@/shared/ui';
+
+const ASSIGNEE_SEARCH_DEBOUNCE_MS = 300;
 
 type TaskCardDetailsModalProps = {
   cardId: string | null;
@@ -14,14 +19,39 @@ type TaskCardDetailsModalProps = {
   onClose: () => void;
 };
 
-function formatDueDate(d: Date | null | undefined): string {
-  if (!d) return '—';
+function dueDateToInputValue(d: Date | string | null | undefined): string {
+  if (!d) return '';
   const date = typeof d === 'string' ? new Date(d) : d;
-  return date.toLocaleDateString('pl-PL', {
-    day: 'numeric',
-    month: 'short',
-    year: 'numeric',
-  });
+  return date.toISOString().slice(0, 10);
+}
+
+function AssigneeChip({
+  user,
+  onRemove,
+  disabled,
+}: {
+  user: UserSearchHit;
+  onRemove: () => void;
+  disabled?: boolean;
+}) {
+  const label = user.name ? `${user.name} (${user.email})` : user.email ?? user.id;
+  return (
+    <span
+      className="inline-flex items-center gap-1.5 rounded-full bg-slate-200 dark:bg-slate-600 px-2.5 py-1 text-sm text-slate-800 dark:text-slate-200"
+      title={user.email ?? ''}
+    >
+      <span className="truncate max-w-[140px]">{label}</span>
+      <button
+        type="button"
+        onClick={onRemove}
+        disabled={disabled}
+        className="rounded-full p-0.5 hover:bg-slate-300 dark:hover:bg-slate-500 disabled:opacity-50"
+        aria-label={`Usuń ${label}`}
+      >
+        <span className="text-slate-600 dark:text-slate-300">×</span>
+      </button>
+    </span>
+  );
 }
 
 export function TaskCardDetailsModal({
@@ -33,6 +63,11 @@ export function TaskCardDetailsModal({
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [commentText, setCommentText] = useState('');
+  const [editDueDate, setEditDueDate] = useState('');
+  const [editType, setEditType] = useState<string>(CARD_TYPES[0]);
+  const [editAssignees, setEditAssignees] = useState<UserSearchHit[]>([]);
+  const [assigneeSearchQuery, setAssigneeSearchQuery] = useState('');
+  const [assigneeDebouncedQuery, setAssigneeDebouncedQuery] = useState('');
   const titleRef = useRef<HTMLInputElement>(null);
   const { addToast } = useToast();
 
@@ -41,38 +76,84 @@ export function TaskCardDetailsModal({
     { cardId: cardId! },
     { skip: !cardId }
   );
-  const [updateCard] = useUpdateCardMutation();
+  const [updateCard, { isLoading: saving }] = useUpdateCardMutation();
   const [addComment, { isLoading: addingComment }] = useAddCommentMutation();
+  const [searchUsers, { data: assigneeSearchResults = [], isFetching: assigneeSearchLoading }] =
+    useLazySearchUsersQuery();
 
   useEffect(() => {
     if (card) {
       setTitle(card.title);
       setDescription(card.description ?? '');
+      setEditDueDate(dueDateToInputValue(card.dueDate));
+      setEditType(card.type && CARD_TYPES.includes(card.type as (typeof CARD_TYPES)[number]) ? card.type : CARD_TYPES[0]);
+      setEditAssignees(
+        (card.assignees ?? []).map((a) => ({
+          id: a.id,
+          name: a.name,
+          email: a.email ?? '',
+        }))
+      );
     }
   }, [card]);
+
+  useEffect(() => {
+    if (!assigneeSearchQuery.trim()) {
+      setAssigneeDebouncedQuery('');
+      return;
+    }
+    const t = setTimeout(
+      () => setAssigneeDebouncedQuery(assigneeSearchQuery.trim()),
+      ASSIGNEE_SEARCH_DEBOUNCE_MS,
+    );
+    return () => clearTimeout(t);
+  }, [assigneeSearchQuery]);
+
+  useEffect(() => {
+    if (assigneeDebouncedQuery) searchUsers({ q: assigneeDebouncedQuery });
+  }, [assigneeDebouncedQuery, searchUsers]);
+
+  const addAssignee = useCallback((user: UserSearchHit) => {
+    setEditAssignees((prev) =>
+      prev.some((u) => u.id === user.id) ? prev : [...prev, user],
+    );
+  }, []);
+
+  const removeAssignee = useCallback((userId: string) => {
+    setEditAssignees((prev) => prev.filter((u) => u.id !== userId));
+  }, []);
 
   useEffect(() => {
     if (cardId && card) titleRef.current?.focus();
   }, [cardId, card]);
 
-  const handleTitleBlur = () => {
-    if (!card || title.trim() === card.title) return;
-    updateCard({ id: card.id, body: { title: title.trim() } })
-      .unwrap()
-      .catch(() => addToast('Nie udało się zapisać tytułu.', 'error'));
-  };
+  const cardAssigneeIds = (card?.assignees ?? []).map((a) => a.id).sort().join(',');
+  const editAssigneeIds = editAssignees.map((u) => u.id).sort().join(',');
+  const hasChanges =
+    card &&
+    (title.trim() !== card.title ||
+      description.trim() !== (card.description ?? '') ||
+      editDueDate !== dueDateToInputValue(card.dueDate) ||
+      editType !== (card.type && CARD_TYPES.includes(card.type as (typeof CARD_TYPES)[number]) ? card.type : CARD_TYPES[0]) ||
+      cardAssigneeIds !== editAssigneeIds);
 
-  const saveDescription = () => {
-    if (!card) return;
-    const desc = description.trim();
-    if (desc === (card.description ?? '')) return;
-    updateCard({ id: card.id, body: { description: desc || undefined } })
-      .unwrap()
-      .catch(() => addToast('Nie udało się zapisać opisu.', 'error'));
-  };
-
-  const handleDescriptionBlur = () => {
-    saveDescription();
+  const handleSave = async () => {
+    if (!card || !hasChanges) return;
+    try {
+      await updateCard({
+        id: card.id,
+        body: {
+          title: title.trim(),
+          description: description.trim() || undefined,
+          dueDate: editDueDate.trim() ? new Date(editDueDate) : null,
+          type: editType as (typeof CARD_TYPES)[number],
+          assigneeIds: editAssignees.map((u) => u.id),
+        },
+      }).unwrap();
+      addToast('Zmiany zapisane.', 'success');
+    } catch {
+      addToast('Nie udało się zapisać zmian.', 'error');
+    }
   };
 
   const handleSendComment = async () => {
@@ -81,6 +162,7 @@ export function TaskCardDetailsModal({
     try {
       await addComment({ cardId, body: { content } }).unwrap();
       setCommentText('');
+      addToast('Komentarz dodany.', 'success');
     } catch {
       addToast('Nie udało się dodać komentarza.', 'error');
     }
@@ -110,27 +192,102 @@ export function TaskCardDetailsModal({
               placeholder="Tytuł karty..."
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              onBlur={handleTitleBlur}
               aria-label="Tytuł karty"
             />
           )}
         </div>
 
         <div className="flex-1 overflow-y-auto px-6 py-4 space-y-8 min-h-0">
-          <div className="grid grid-cols-2 gap-4 text-sm">
-            <div className="flex flex-col gap-1">
-              <span className="text-slate-500 dark:text-slate-400 font-medium">Assignee</span>
-              <span className="font-medium text-slate-700 dark:text-slate-300">—</span>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
+            <div className="flex flex-col gap-2">
+              <span className="text-slate-500 dark:text-slate-400 font-medium">Typ zadania</span>
+              <Select
+                value={editType}
+                onChange={(e) => setEditType(e.target.value)}
+                options={CARD_TYPES.map((t) => ({ value: t, label: t }))}
+                aria-label="Typ karty"
+              />
             </div>
-            <div className="flex flex-col gap-1">
-              <span className="text-slate-500 dark:text-slate-400 font-medium">Due Date</span>
+            <div className="flex flex-col gap-2">
+              <span className="text-slate-500 dark:text-slate-400 font-medium">Termin</span>
               <div className="flex items-center gap-2">
-                <span className="material-symbols-outlined text-slate-400 text-lg">calendar_today</span>
-                <span className="font-medium text-slate-700 dark:text-slate-300">
-                  {card ? formatDueDate(card.dueDate ?? null) : '—'}
-                </span>
+                <span className="material-symbols-outlined text-slate-400 text-lg shrink-0">calendar_today</span>
+                <input
+                  type="date"
+                  value={editDueDate}
+                  onChange={(e) => setEditDueDate(e.target.value)}
+                  className="flex-1 rounded-lg border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-200 text-sm px-3 py-2 focus:ring-primary focus:border-primary"
+                  aria-label="Termin realizacji"
+                />
               </div>
             </div>
+          </div>
+
+          <section>
+            <div className="flex items-center gap-2 mb-2">
+              <span className="material-symbols-outlined text-slate-500 dark:text-slate-400">person</span>
+              <span className="text-slate-500 dark:text-slate-400 font-medium">Przypisani</span>
+            </div>
+            <div className="flex flex-wrap gap-2 mb-2">
+              {editAssignees.length === 0 ? (
+                <span className="text-slate-500 dark:text-slate-400 text-sm">Brak przypisanych</span>
+              ) : (
+                editAssignees.map((u) => (
+                  <AssigneeChip
+                    key={u.id}
+                    user={u}
+                    onRemove={() => removeAssignee(u.id)}
+                  />
+                ))
+              )}
+            </div>
+            <div className="relative">
+              <input
+                type="text"
+                value={assigneeSearchQuery}
+                onChange={(e) => setAssigneeSearchQuery(e.target.value)}
+                placeholder="Szukaj użytkownika do przypisania..."
+                className="w-full rounded-lg border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-200 text-sm px-3 py-2 focus:ring-primary focus:border-primary"
+                aria-label="Szukaj użytkownika"
+              />
+              {assigneeSearchQuery.trim() && (
+                <div className="absolute top-full left-0 right-0 mt-1 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 shadow-lg z-10 max-h-48 overflow-y-auto">
+                  {assigneeSearchLoading ? (
+                    <div className="p-3 text-sm text-slate-500">Szukam...</div>
+                  ) : assigneeSearchResults.length === 0 ? (
+                    <div className="p-3 text-sm text-slate-500">Brak wyników</div>
+                  ) : (
+                    assigneeSearchResults
+                      .filter((u) => !editAssignees.some((a) => a.id === u.id))
+                      .map((u) => (
+                        <button
+                          key={u.id}
+                          type="button"
+                          onClick={() => addAssignee(u)}
+                          className="w-full text-left px-3 py-2 text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 flex items-center gap-2"
+                        >
+                          <span className="font-medium">{u.name ?? u.email}</span>
+                          {u.email && u.name && (
+                            <span className="text-slate-500 text-xs">{u.email}</span>
+                          )}
+                        </button>
+                      ))
+                  )}
+                </div>
+              )}
+            </div>
+          </section>
+
+          <div className="flex justify-end">
+            <Button
+              size="m"
+              variant="primary"
+              onClick={handleSave}
+              loading={saving}
+              disabled={!hasChanges || saving}
+            >
+              Zapisz
+            </Button>
           </div>
 
           <section>
@@ -143,14 +300,8 @@ export function TaskCardDetailsModal({
               placeholder="Dodaj opis..."
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              onBlur={handleDescriptionBlur}
               aria-label="Opis karty"
             />
-            <div className="mt-2 flex justify-end">
-              <Button size="s" variant="secondary" onClick={saveDescription}>
-                Zapisz
-              </Button>
-            </div>
           </section>
 
           <section>

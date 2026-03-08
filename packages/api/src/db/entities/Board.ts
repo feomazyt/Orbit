@@ -33,6 +33,10 @@ export class Board {
   @Property({ type: 'smallint', default: 0 })
   priorityLevel = 0;
 
+  /** Optional webhook URL – POST called when card moves (and optionally create/update). */
+  @Property({ type: 'string', nullable: true })
+  webhookUrl?: string | null;
+
   @OneToMany(() => BoardMember, (bm: BoardMember) => bm.board)
   members = new Collection<BoardMember>(this);
 

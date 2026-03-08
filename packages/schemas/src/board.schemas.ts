@@ -26,6 +26,7 @@ export const UpdateBoardBodySchema = z.object({
   description: z.string().max(2000).optional(),
   type: z.enum(BOARD_TYPES).optional(),
   priorityLevel: z.number().int().min(1).max(5).optional(),
+  webhookUrl: z.string().url().nullable().optional(),
 });
 
 export const ListBoardsQuerySchema = z.object({

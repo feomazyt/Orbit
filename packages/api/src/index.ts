@@ -1,4 +1,5 @@
 import express from 'express';
+import http from 'http';
 import { initDatabase, getOrm } from './db';
 import { authRouter } from './routes/auth.js';
 import { boardsRouter } from './routes/boards.js';
@@ -7,13 +8,17 @@ import { cardsRouter } from './routes/cards.js';
 import { commentsRouter } from './routes/comments.js';
 import { healthRouter } from './routes/health.js';
 import { usersRouter } from './routes/users.js';
+import { notificationsRouter } from './routes/notifications.js';
 import { corsMiddleware } from './middleware/cors.js';
 import { requestLogger } from './middleware/requestLogger.js';
 import { notFound } from './middleware/notFound.js';
 import { errorHandler } from './middleware/errorHandler.js';
+import { initSocketIo } from './realtime/socket.js';
+import { startWebhookWorker } from './webhooks/worker.js';
 
 const app = express();
 const port = 3000;
+const httpServer = http.createServer(app);
 
 app.use(corsMiddleware);
 app.use(requestLogger);
@@ -30,13 +35,32 @@ app.use('/lists', listsRouter);
 app.use('/cards', cardsRouter);
 app.use('/comments', commentsRouter);
 app.use('/users', usersRouter);
+app.use('/notifications', notificationsRouter);
 
 app.use(notFound);
 app.use(errorHandler);
 
 async function main() {
   await initDatabase();
-  const server = app.listen(port, () => {
+  startWebhookWorker();
+  const io = initSocketIo(httpServer);
+
+  io.on('connection', (socket) => {
+    const userId = socket.data.userId as string | undefined;
+    if (userId) {
+      socket.join(`user:${userId}`);
+    }
+    socket.on('joinBoard', (boardId: string) => {
+      if (!boardId) return;
+      socket.join(`board:${boardId}`);
+    });
+    socket.on('leaveBoard', (boardId: string) => {
+      if (!boardId) return;
+      socket.leave(`board:${boardId}`);
+    });
+  });
+
+  const server = httpServer.listen(port, () => {
     console.log(`Example app listening on port ${port}`);
   });
 

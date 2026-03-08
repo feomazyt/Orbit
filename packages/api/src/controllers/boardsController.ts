@@ -27,7 +27,7 @@ export async function list(req: Request, res: Response, _next: NextFunction): Pr
   const em = getEntityManager();
   const { boardRepository } = getRepositories(em);
 
-  const boards = await boardRepository.findByOwnerId(userId, {
+  const boards = await boardRepository.findBoardsForUser(userId, {
     limit: query.limit,
     offset: query.offset,
     title: query.title,
@@ -65,8 +65,13 @@ export async function getById(req: Request, res: Response, next: NextFunction): 
   const em = getEntityManager();
   const { boardRepository } = getRepositories(em);
 
-  const board = await boardRepository.findById(id);
-  if (!board || board.owner.id !== userId) {
+  const board = await boardRepository.findByIdWithMembers(id);
+  if (!board) {
+    next(notFound('Board not found'));
+    return;
+  }
+  const isMemberOrOwner = board.members.getItems().some((m) => m.user.id === userId);
+  if (!isMemberOrOwner) {
     next(notFound('Board not found'));
     return;
   }
@@ -91,6 +96,7 @@ export async function update(req: Request, res: Response, next: NextFunction): P
     description: body.description,
     type: body.type,
     priorityLevel: body.priorityLevel,
+    webhookUrl: body.webhookUrl,
   });
   res.json(updated);
 }

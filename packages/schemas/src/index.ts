@@ -34,9 +34,11 @@ export {
   CreateCardBodySchema,
   UpdateCardBodySchema,
   MoveCardBodySchema,
+  CARD_TYPES,
   type CreateCardBody,
   type UpdateCardBody,
   type MoveCardBody,
+  type CardType,
 } from './card.schemas.js';
 
 export {
@@ -59,4 +61,5 @@ export {
   type CardEntity,
   type CommentEntity,
   type UserEntity,
+  type CardAssigneeUser,
 } from './entities.js';

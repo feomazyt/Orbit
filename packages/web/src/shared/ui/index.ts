@@ -14,3 +14,4 @@ export { BoardAvatars } from './BoardAvatars';
 export type { BoardAvatarUser } from './BoardAvatars';
 export { Navbar } from './Navbar';
 export { Footer } from './Footer';
+export { NotificationBell } from './NotificationBell';

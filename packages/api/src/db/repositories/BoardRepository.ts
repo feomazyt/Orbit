@@ -35,12 +35,19 @@ export class BoardRepository {
       orderBy: { createdAt: 'DESC' },
       limit: options?.limit,
       offset: options?.offset,
-      populate: ['owner'],
+      populate: ['owner', 'members', 'members.user'],
     });
   }
 
   findById(id: string): Promise<Board | null> {
     return this.em.findOne(Board, { id }, { populate: ['owner'] });
+  }
+
+  /** Find board by id with owner and members (for single-board view). */
+  findByIdWithMembers(id: string): Promise<Board | null> {
+    return this.em.findOne(Board, { id }, {
+      populate: ['owner', 'members', 'members.user'],
+    });
   }
 
   findBoardMember(boardId: string, userId: string): Promise<BoardMember | null> {
@@ -109,13 +116,20 @@ export class BoardRepository {
 
   async update(
     id: string,
-    data: Partial<{ title: string; description: string; type: string; priorityLevel: number }>
+    data: Partial<{
+      title: string;
+      description: string;
+      type: string;
+      priorityLevel: number;
+      webhookUrl: string | null;
+    }>
   ): Promise<Board> {
     const board = await this.em.findOneOrFail(Board, { id });
     if (data.title !== undefined) board.title = data.title;
     if (data.description !== undefined) board.description = data.description;
     if (data.type !== undefined) board.type = data.type;
     if (data.priorityLevel !== undefined) board.priorityLevel = data.priorityLevel;
+    if (data.webhookUrl !== undefined) board.webhookUrl = data.webhookUrl;
     await this.em.flush();
     return board;
   }

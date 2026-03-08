@@ -1,5 +1,6 @@
 import { Collection, Entity, OneToMany, PrimaryKey, Property, Unique } from '@mikro-orm/core';
 import { BoardMember } from './BoardMember';
+import { CardAssignee } from './CardAssignee';
 
 @Entity({ tableName: 'users' })
 export class User {
@@ -18,6 +19,9 @@ export class User {
 
   @OneToMany(() => BoardMember, (bm: BoardMember) => bm.user)
   boardMembers = new Collection<BoardMember>(this);
+
+  @OneToMany(() => CardAssignee, (ca: CardAssignee) => ca.user)
+  cardAssignments = new Collection<CardAssignee>(this);
 
   @Property({ type: 'Date' })
   createdAt = new Date();

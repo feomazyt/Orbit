@@ -73,7 +73,7 @@ export function LoginPage() {
           <h1 className="text-text-main dark:text-slate-100 text-[28px] font-bold leading-tight text-center mb-8">
             Zaloguj się
           </h1>
-          <form onSubmit={handleSubmit} className="space-y-5" aria-label="Formularz logowania">
+          <form onSubmit={handleSubmit} className="space-y-5" aria-label="Formularz logowania" data-testid="login-form">
             <div className="space-y-2">
               <label htmlFor="login-email" className="block text-text-main dark:text-slate-200 text-sm font-semibold">
                 E-mail
@@ -92,6 +92,7 @@ export function LoginPage() {
                 className="border-border-light dark:border-slate-700 focus:ring-2 focus:ring-primary/20 focus:border-primary"
                 aria-describedby={errorMessage ? 'login-error' : undefined}
                 aria-invalid={Boolean(errorMessage)}
+                data-testid="login-email"
               />
             </div>
             <div className="space-y-2">
@@ -120,6 +121,7 @@ export function LoginPage() {
                 className="border-border-light dark:border-slate-700 focus:ring-2 focus:ring-primary/20 focus:border-primary"
                 aria-describedby={errorMessage ? 'login-error' : undefined}
                 aria-invalid={Boolean(errorMessage)}
+                data-testid="login-password"
               />
             </div>
             <div className="flex items-center gap-2">
@@ -151,6 +153,7 @@ export function LoginPage() {
               disabled={isLoading}
               className="w-full h-10 bg-primary hover:bg-primary/90 text-white font-semibold rounded-md shadow-lg shadow-primary/20 transition-all flex items-center justify-center gap-2 mt-2 active:scale-[0.98] disabled:opacity-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-white"
               aria-describedby={errorMessage ? 'login-error' : undefined}
+              data-testid="login-submit"
             >
               {isLoading ? 'Logowanie…' : 'Zaloguj się'}
               <span className="material-symbols-outlined text-lg">

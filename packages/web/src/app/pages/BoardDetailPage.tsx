@@ -1,25 +1,45 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
 import { useParams, Link } from 'react-router-dom';
+import { useStore, useDispatch } from 'react-redux';
+import type { AppDispatch, RootState } from '@/app/store';
+import {
+  DndContext,
+  DragOverlay,
+  PointerSensor,
+  TouchSensor,
+  useSensor,
+  useSensors,
+  closestCenter,
+  type DragStartEvent,
+  type DragEndEvent,
+} from '@dnd-kit/core';
 import {
   useGetBoardQuery,
   useGetListsQuery,
   useUpdateBoardMutation,
   useDeleteBoardMutation,
+  useMoveCardMutation,
+  api,
 } from '@/shared/api';
 import { Button, useToast } from '@/shared/ui';
 import { KanbanColumn } from '@/app/components/KanbanColumn';
 import { AddListBlock } from '@/app/components/AddListBlock';
 import { TaskCardDetailsModal } from '@/app/components/TaskCardDetailsModal';
-import type { CardEntity } from '@/shared/types';
+import type { CardEntity, ListEntity } from '@/shared/types';
+import { useBoardRealtime } from '@/shared/realtime/useBoardRealtime';
 
 export function BoardDetailPage() {
   const { boardId } = useParams<{ boardId: string }>();
   const [selectedCard, setSelectedCard] = useState<{ card: CardEntity; listTitle: string } | null>(null);
+  const [activeDragCard, setActiveDragCard] = useState<CardEntity | null>(null);
+  const [activeDragListTitle, setActiveDragListTitle] = useState('');
   const [boardMenuOpen, setBoardMenuOpen] = useState(false);
   const [isEditingTitle, setIsEditingTitle] = useState(false);
   const [boardTitle, setBoardTitle] = useState('');
   const menuRef = useRef<HTMLDivElement>(null);
   const { addToast } = useToast();
+  const store = useStore<RootState>();
+  const dispatch = useDispatch<AppDispatch>();
 
   const { data: board, isLoading: boardLoading, error: boardError } = useGetBoardQuery(boardId!, {
     skip: !boardId,
@@ -30,6 +50,110 @@ export function BoardDetailPage() {
 
   const [updateBoard] = useUpdateBoardMutation();
   const [deleteBoard, { isLoading: deleting }] = useDeleteBoardMutation();
+  const [moveCard] = useMoveCardMutation();
+
+  useBoardRealtime(boardId);
+
+  const sensors = useSensors(
+    useSensor(PointerSensor, { activationConstraint: { distance: 8 } }),
+    useSensor(TouchSensor, { activationConstraint: { delay: 250, tolerance: 5 } })
+  );
+
+  const handleDragStart = useCallback(
+    (event: DragStartEvent) => {
+      const { active } = event;
+      const data = active.data?.current as { card?: CardEntity; listId?: string } | undefined;
+      if (!data?.card) return;
+
+      const listTitle = (lists as ListEntity[]).find((l) => l.id === data.listId)?.title ?? '';
+      setActiveDragCard(data.card);
+      setActiveDragListTitle(listTitle);
+    },
+    [lists]
+  );
+
+  const handleDragEnd = useCallback(
+    (event: DragEndEvent) => {
+      const { active, over } = event;
+      if (!over || active.id === over.id) return;
+
+      setActiveDragCard(null);
+      setActiveDragListTitle('');
+
+      const sourceListId = active.data?.current?.listId as string | undefined;
+      if (!sourceListId) return;
+
+      const state = store.getState();
+      const listIds = (lists as ListEntity[]).map((l) => l.id);
+      const getCachedCards = (listId: string): CardEntity[] => {
+        const result = (api.endpoints as { getCards: { select: (arg: string) => (s: RootState) => { data?: CardEntity[] } } }).getCards.select(listId)(state);
+        return result?.data ?? [];
+      };
+
+      let targetListId: string;
+      let targetIndex: number;
+
+      if (listIds.includes(over.id as string)) {
+        targetListId = over.id as string;
+        const targetCards = getCachedCards(targetListId);
+        targetIndex = targetCards.length;
+      } else {
+        targetListId = (over.data?.current?.listId as string) ?? sourceListId;
+        const targetCards = getCachedCards(targetListId);
+        const overIndex = targetCards.findIndex((c) => c.id === over.id);
+        targetIndex = overIndex >= 0 ? overIndex : 0;
+      }
+
+      const sourceCards = getCachedCards(sourceListId);
+      const sourceIndex = sourceCards.findIndex((c) => c.id === active.id);
+      if (sourceIndex < 0) return;
+      if (sourceListId === targetListId && sourceIndex === targetIndex) return;
+
+      const movedCard = sourceCards.find((c) => c.id === active.id);
+      if (!movedCard) return;
+
+      const prevSource = [...sourceCards];
+      const prevTarget = [...getCachedCards(targetListId)];
+
+      const updateCardsCache = (
+        listId: string,
+        update: (draft: CardEntity[]) => void
+      ) => {
+        (dispatch as (action: unknown) => unknown)(
+          (api.util.updateQueryData as (endpoint: string, arg: string, update: (draft: CardEntity[]) => void) => unknown)(
+            'getCards',
+            listId,
+            update
+          )
+        );
+      };
+
+      updateCardsCache(sourceListId, (draft) => {
+        const idx = draft.findIndex((c) => c.id === active.id);
+        if (idx !== -1) draft.splice(idx, 1);
+      });
+      updateCardsCache(targetListId, (draft) => {
+        const inserted = { ...movedCard, listId: targetListId, position: targetIndex };
+        draft.splice(targetIndex, 0, inserted);
+      });
+
+      moveCard({
+        id: active.id as string,
+        body: { listId: targetListId, position: targetIndex },
+      })
+        .unwrap()
+        .catch(() => {
+          updateCardsCache(sourceListId, (draft) => {
+            draft.splice(0, draft.length, ...prevSource);
+          });
+          updateCardsCache(targetListId, (draft) => {
+            draft.splice(0, draft.length, ...prevTarget);
+          });
+          addToast('Nie udało się przenieść karty.', 'error');
+        });
+    },
+    [lists, store, dispatch, moveCard, addToast]
+  );
 
   useEffect(() => {
     if (board) setBoardTitle(board.title);
@@ -222,7 +346,16 @@ export function BoardDetailPage() {
               ))}
             </>
           ) : (
-            <>
+            <DndContext
+              sensors={sensors}
+              collisionDetection={closestCenter}
+              onDragStart={handleDragStart}
+              onDragEnd={handleDragEnd}
+              onDragCancel={() => {
+                setActiveDragCard(null);
+                setActiveDragListTitle('');
+              }}
+            >
               {lists.map((list) => (
                 <KanbanColumn
                   key={list.id}
@@ -231,7 +364,32 @@ export function BoardDetailPage() {
                 />
               ))}
               <AddListBlock boardId={boardId} />
-            </>
+
+              <DragOverlay>
+                {activeDragCard && (
+                  <div className="w-80 pointer-events-none">
+                    <div className="w-full text-left bg-white dark:bg-slate-800 p-4 rounded-lg shadow-2xl border border-slate-200 dark:border-slate-700 flex flex-col gap-3">
+                      <div className="flex flex-col gap-2 min-w-0">
+                        <span className="w-fit px-2 py-0.5 rounded text-[10px] font-semibold uppercase tracking-wide bg-slate-200 dark:bg-slate-600 text-slate-700 dark:text-slate-200">
+                          {activeDragCard.type ?? 'task'}
+                        </span>
+                        <h4
+                          className="text-sm font-semibold text-slate-900 dark:text-slate-100 leading-snug line-clamp-2 wrap-break-word"
+                          title={activeDragCard.title}
+                        >
+                          {activeDragCard.title || 'Bez tytułu'}
+                        </h4>
+                        {activeDragListTitle && (
+                          <p className="text-xs text-slate-500 dark:text-slate-400">
+                            {activeDragListTitle}
+                          </p>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </DragOverlay>
+            </DndContext>
           )}
         </div>
       </main>

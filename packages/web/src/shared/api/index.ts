@@ -11,6 +11,7 @@ import './lists.endpoints.js';
 import './cards.endpoints.js';
 import './comments.endpoints.js';
 import './users.endpoints.js';
+import './notifications.endpoints.js';
 
 export {
   useLoginMutation,
@@ -61,3 +62,9 @@ export {
   useLazySearchUsersQuery,
 } from './users.endpoints.js';
 export type { UserSearchHit } from './users.endpoints.js';
+
+export {
+  useGetNotificationsQuery,
+  useMarkNotificationReadMutation,
+} from './notifications.endpoints.js';
+export type { NotificationEntity, ListNotificationsQuery } from './notifications.endpoints.js';

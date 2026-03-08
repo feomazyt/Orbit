@@ -22,7 +22,7 @@ function getErrorMessage(error: FetchBaseQueryError): string {
     return String((error.data as { message?: string }).message);
   }
   if (error.status === 404) return 'Nie znaleziono.';
-  if (error.status && error.status >= 500) return 'Błąd serwera. Spróbuj ponownie.';
+  if (error.status != null && Number(error.status) >= 500) return 'Błąd serwera. Spróbuj ponownie.';
   return 'Wystąpił błąd. Spróbuj ponownie.';
 }
 

@@ -25,7 +25,10 @@ export const cardsEndpoints = api.injectEndpoints({
     }),
     updateCard: builder.mutation<CardEntity, { id: string; body: UpdateCardBody }>({
       query: ({ id, body }) => ({ url: `/cards/${id}`, method: 'PATCH', body }),
-      invalidatesTags: (_result, _error, { id }) => [{ type: 'Card', id }],
+      invalidatesTags: (_result, _error, { id }) => [
+        { type: 'Card', id },
+        { type: 'Card', id: 'LIST' },
+      ],
     }),
     moveCard: builder.mutation<CardEntity, { id: string; body: MoveCardBody }>({
       query: ({ id, body }) => ({ url: `/cards/${id}/move`, method: 'POST', body }),

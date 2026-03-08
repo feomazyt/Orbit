@@ -16,8 +16,8 @@ type ToastContextValue = {
 
 const ToastContext = createContext<ToastContextValue | null>(null);
 
-/** Auto-hide 3–5 s (4 s) */
-const AUTO_HIDE_MS = 4000;
+/** Auto-hide 3 s (short toasts) */
+const AUTO_HIDE_MS = 3000;
 
 /** Callback ustawiany przez ToastProvider – do wywołań poza React (np. baseQuery) */
 let globalAddToast: ((message: ReactNode, variant?: ToastVariant) => void) | null = null;

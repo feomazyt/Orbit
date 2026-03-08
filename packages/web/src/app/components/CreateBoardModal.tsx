@@ -148,7 +148,7 @@ export function CreateBoardModal({ open, onClose }: CreateBoardModalProps) {
 
   return (
     <Modal open={open} onClose={handleClose} title="Nowa tablica" maxWidth="md">
-      <form onSubmit={handleSubmit} className="space-y-6">
+      <form onSubmit={handleSubmit} className="space-y-6" data-testid="create-board-form">
         <Input
           label="Nazwa"
           placeholder="np. Marketing Q4"
@@ -157,6 +157,7 @@ export function CreateBoardModal({ open, onClose }: CreateBoardModalProps) {
           error={error}
           autoFocus
           disabled={submitting}
+          data-testid="create-board-title"
         />
         <Textarea
           label="Opis (opcjonalny)"
@@ -255,6 +256,7 @@ export function CreateBoardModal({ open, onClose }: CreateBoardModalProps) {
             size="m"
             loading={submitting}
             disabled={submitting}
+            data-testid="create-board-submit"
           >
             Zapisz
           </Button>

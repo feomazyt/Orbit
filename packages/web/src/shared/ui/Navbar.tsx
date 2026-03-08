@@ -5,6 +5,7 @@ import { Avatar } from './Avatar';
 import { useAppSelector, useAppDispatch } from '@/app/hooks';
 import { logout } from '@/features/auth';
 import { useLogoutMutation } from '@/shared/api';
+import { NotificationBell } from './NotificationBell';
 
 function getInitials(
   name: string | undefined,
@@ -95,10 +96,12 @@ export function Navbar() {
         >
           <div className="hidden md:flex items-center gap-4">
             {isAuthenticated ? (
-              <div
-                className="flex items-center gap-3 pl-1 relative"
-                ref={menuRef}
-              >
+              <>
+                <NotificationBell />
+                <div
+                  className="flex items-center gap-3 pl-1 relative"
+                  ref={menuRef}
+                >
                 <div className="text-right hidden sm:block">
                   <p className="text-sm font-semibold leading-none text-slate-900 dark:text-white">
                     {user?.name ?? user?.email ?? 'Użytkownik'}
@@ -138,7 +141,8 @@ export function Navbar() {
                     </button>
                   </div>
                 )}
-              </div>
+                </div>
+              </>
             ) : (
               <>
                 <Button variant="ghost" to="/login" size="s">
@@ -175,6 +179,9 @@ export function Navbar() {
         >
           {isAuthenticated ? (
             <>
+              <div className="mb-2 flex justify-end">
+                <NotificationBell />
+              </div>
               <Button
                 variant="ghost"
                 to="/boards"

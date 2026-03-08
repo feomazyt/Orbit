@@ -16,7 +16,12 @@ export async function listByBoard(req: Request, res: Response, next: NextFunctio
   const { boardRepository, listRepository } = getRepositories(em);
 
   const board = await boardRepository.findById(boardId);
-  if (!board || board.owner.id !== userId) {
+  if (!board) {
+    next(notFound('Board not found'));
+    return;
+  }
+  const member = await boardRepository.findBoardMember(boardId, userId);
+  if (!member) {
     next(notFound('Board not found'));
     return;
   }
@@ -34,7 +39,12 @@ export async function createOnBoard(req: Request, res: Response, next: NextFunct
   const { boardRepository, listRepository } = getRepositories(em);
 
   const board = await boardRepository.findById(boardId);
-  if (!board || board.owner.id !== userId) {
+  if (!board) {
+    next(notFound('Board not found'));
+    return;
+  }
+  const member = await boardRepository.findBoardMember(boardId, userId);
+  if (!member) {
     next(notFound('Board not found'));
     return;
   }
@@ -52,10 +62,15 @@ export async function update(req: Request, res: Response, next: NextFunction): P
   const userId = req.user!.userId;
   const id = getIdParam(req);
   const em = getEntityManager();
-  const { listRepository } = getRepositories(em);
+  const { boardRepository, listRepository } = getRepositories(em);
 
   const list = await listRepository.findById(id);
-  if (!list || list.board.owner.id !== userId) {
+  if (!list) {
+    next(notFound('List not found'));
+    return;
+  }
+  const member = await boardRepository.findBoardMember(list.board.id, userId);
+  if (!member) {
     next(notFound('List not found'));
     return;
   }
@@ -68,10 +83,15 @@ export async function remove(req: Request, res: Response, next: NextFunction): P
   const userId = req.user!.userId;
   const id = getIdParam(req);
   const em = getEntityManager();
-  const { listRepository } = getRepositories(em);
+  const { boardRepository, listRepository } = getRepositories(em);
 
   const list = await listRepository.findById(id);
-  if (!list || list.board.owner.id !== userId) {
+  if (!list) {
+    next(notFound('List not found'));
+    return;
+  }
+  const member = await boardRepository.findBoardMember(list.board.id, userId);
+  if (!member) {
     next(notFound('List not found'));
     return;
   }
@@ -101,11 +121,13 @@ export async function reorder(req: Request, res: Response, next: NextFunction): 
     return;
   }
   const first = lists[0]!;
-  if (first.board.owner.id !== userId) {
+  const boardId = first.board.id;
+  const boardRepository = getRepositories(em).boardRepository;
+  const member = await boardRepository.findBoardMember(boardId, userId);
+  if (!member) {
     next(notFound('List not found'));
     return;
   }
-  const boardId = first.board.id;
   const sameBoard = lists.every((l) => l!.board.id === boardId);
   if (!sameBoard) {
     next(badRequest('All lists must belong to the same board'));

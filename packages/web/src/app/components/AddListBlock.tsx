@@ -42,9 +42,10 @@ export function AddListBlock({ boardId }: AddListBlockProps) {
           }}
           error={formError}
           autoFocus
+          data-testid="add-list-title"
         />
         <div className="flex gap-2 mt-3">
-          <Button size="s" variant="primary" onClick={handleSave} loading={isLoading} disabled={isLoading || !title.trim()}>
+          <Button size="s" variant="primary" onClick={handleSave} loading={isLoading} disabled={isLoading || !title.trim()} data-testid="add-list-submit">
             Zapisz
           </Button>
           <Button size="s" variant="ghost" onClick={() => { setIsAdding(false); setTitle(''); }}>
@@ -61,6 +62,7 @@ export function AddListBlock({ boardId }: AddListBlockProps) {
         type="button"
         onClick={() => setIsAdding(true)}
         className="w-full flex items-center justify-center gap-2 py-4 px-4 rounded-xl bg-white/20 dark:bg-white/5 border-2 border-dashed border-slate-400/30 dark:border-slate-600/30 text-slate-600 dark:text-slate-400 text-base font-bold hover:bg-white/40 dark:hover:bg-white/10 hover:border-primary/50 hover:text-primary transition-all group"
+        data-testid="add-list-btn"
       >
         <div className="p-1 rounded-lg bg-slate-200/50 dark:bg-slate-700/50 group-hover:bg-primary group-hover:text-white transition-all">
           <span className="material-symbols-outlined">add</span>

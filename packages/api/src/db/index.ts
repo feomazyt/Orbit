@@ -91,5 +91,7 @@ export {
   ListRepository,
   CardRepository,
   CardCommentRepository,
+  NotificationRepository,
+  WebhookLogRepository,
 } from './repositories';
 export type { Repositories } from './repositories';

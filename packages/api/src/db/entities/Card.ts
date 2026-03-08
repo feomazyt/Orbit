@@ -1,11 +1,14 @@
 import {
+  Collection,
   Entity,
   Index,
   ManyToOne,
+  OneToMany,
   PrimaryKey,
   Property,
 } from '@mikro-orm/core';
 import { List } from './List';
+import { CardAssignee } from './CardAssignee';
 
 @Entity({ tableName: 'cards' })
 @Index({ properties: ['list'] })
@@ -25,8 +28,15 @@ export class Card {
   @Property({ type: 'decimal', precision: 10, scale: 2 })
   position!: number;
 
+  /** Task type, e.g. 'task', 'bug', 'feature', 'story'. */
+  @Property({ type: 'string', default: 'task' })
+  type = 'task';
+
   @Property({ type: 'Date', nullable: true })
   dueDate?: Date;
+
+  @OneToMany(() => CardAssignee, (ca: CardAssignee) => ca.card)
+  assignees = new Collection<CardAssignee>(this);
 
   @Property({ type: 'Date' })
   createdAt = new Date();

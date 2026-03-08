@@ -46,6 +46,14 @@ export const ListEntitySchema = z.object({
 });
 export type ListEntity = z.infer<typeof ListEntitySchema>;
 
+/** Minimal user as in card assignees (id, name, email only) */
+export const CardAssigneeUserSchema = z.object({
+  id: z.string().uuid(),
+  name: z.string().optional(),
+  email: z.string().optional(),
+});
+export type CardAssigneeUser = z.infer<typeof CardAssigneeUserSchema>;
+
 export const CardEntitySchema = z.object({
   id: z.string().uuid(),
   title: z.string(),
@@ -53,7 +61,9 @@ export const CardEntitySchema = z.object({
   position: z.number(),
   list: z.string().uuid().optional(),
   listId: z.string().uuid().optional(),
+  type: z.string().optional(),
   dueDate: dateSchema.nullable().optional(),
+  assignees: z.array(CardAssigneeUserSchema).optional(),
   createdAt: dateSchema,
   updatedAt: dateSchema,
 });

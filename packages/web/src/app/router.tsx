@@ -1,4 +1,4 @@
-import { createBrowserRouter, Navigate, RouterProvider } from 'react-router-dom';
+import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import { ProtectedRoute } from '@/app/components/ProtectedRoute';
 import { GuestOnlyRoute } from '@/app/components/GuestOnlyRoute';
 import { HomeOrRedirect } from '@/app/components/HomeOrRedirect';
